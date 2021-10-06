@@ -104,6 +104,7 @@
                 }
 
 
+
                 if(empty($data['email_err']) && empty($data['password_err'])){
                     $loggedInUser = $this->userModel->login($data['email'] , $data['password']);
 
