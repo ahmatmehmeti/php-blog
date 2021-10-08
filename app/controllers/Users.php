@@ -16,6 +16,7 @@
                     'name' => trim($_POST['name']),
                     'email'=> trim($_POST['email']),
                     'password'=>trim($_POST['password']),
+                    'created_at'=>date('Y-m-d H:i:s'),
                     'confirm_password' => trim($_POST['confirm_password']),
                     'name_err' => '',
                     'email_err' => '',
@@ -31,7 +32,7 @@
                 }
 
                 if(empty($data['name'])){
-                    $data['name_err'] = 'Please enter email';
+                    $data['name_err'] = 'Please enter name';
                 }
 
                 if(empty($data['password'])){
@@ -53,6 +54,7 @@
 
                     if($this->userModel->register($data)){
                         flash('register_success','You are registered and can log in');
+
                         redirect('users/login');
                     }else{
                         die('Something went wrong');
@@ -85,9 +87,11 @@
                 $data = [
                     'email'=> trim($_POST['email']),
                     'password'=>trim($_POST['password']),
+                    'remember'=>$_POST['remember'],
                     'email_err' => '',
                     'password_err' => '',
                 ];
+
 
                 if(empty($data['email'])){
                     $data['email_err'] = 'Please enter email';
@@ -103,13 +107,24 @@
                     $data['email_err'] = 'No user found';
                 }
 
+                if (!empty($_POST["remember"])) {
+                    setcookie ("email",$_POST["email"],time()+ (10 * 365 * 24 * 60 * 60));
+                    setcookie ("password",$_POST["password"],time()+ (10 * 365 * 24 * 60 * 60));
+                } else {
+                    if (isset($_COOKIE["email"])) {
+                        setcookie("email", "");
+                    }
+                    if (isset($_COOKIE['password'])) {
+                        setcookie("password", "");
+                    }
+                }
 
 
                 if(empty($data['email_err']) && empty($data['password_err'])){
                     $loggedInUser = $this->userModel->login($data['email'] , $data['password']);
 
                     if($loggedInUser){
-                        die('SUCCESS');
+                        $this->createUserSession($loggedInUser);
                     }else{
                         $data['password_err'] = 'Password incorrect';
                     }
@@ -127,5 +142,25 @@
 
                 $this->view('users/login',$data);
             }
+        }
+
+        public function createUserSession($user)
+        {
+            $_SESSION['user_id'] = $user->id;
+            $_SESSION['user_email'] = $user->email;
+            $_SESSION['user_password'] = $user->password;
+            $_SESSION['user_role'] = $user->role;
+            redirect('posts');
+        }
+
+        public function logout()
+        {
+            unset($_SESSION['user_id']);
+            unset($_SESSION['user_email']);
+            unset($_SESSION['user_password']);
+            unset($_SESSION['user_role']);
+            session_destroy();
+
+            redirect('users/login');
         }
     }
