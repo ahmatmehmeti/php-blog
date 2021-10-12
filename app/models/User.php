@@ -7,11 +7,39 @@ class User{
     }
 
     public function register($data){
-        $this->db->query('INSERT INTO users(name,email,password,created_at) VALUES (:name,:email,:password,:created_at)');
+        $hash = md5(rand(0,1000));
+        $this->db->query('INSERT INTO users(name,email,password,hash,created_at) VALUES (:name,:email,:password,:hash,:created_at)');
         $this->db->bind(':name',$data['name']);
         $this->db->bind(':email',$data['email']);
         $this->db->bind(':password',$data['password']);
+        $this->db->bind(':hash',$hash);
         $this->db->bind(':created_at',$data['created_at']);
+
+        if($this->db->execute()){
+            $to      = $data['email'];
+            $subject = 'the subject';
+            $message = "Confirm your Email,
+               http://localhost/php-blog/users/verify?hash=$hash
+            ";
+            $headers = 'From: ahmat.mehmeti97@gmail.com';
+            mail($to, $subject, $message, $headers);
+        }else{
+            return false;
+        }
+    }
+
+    public  function verify()
+    {
+        $this->db->query('SELECT * FROM users WHERE active = :active and hash = :hash');
+        $this->db->bind(':active', 0);
+        $this->db->bind(':hash', $_GET['hash']);
+
+        $user = $this->db->single();
+
+        $this->db->query('UPDATE users SET active = :active WHERE hash = :hash');
+        $this->db->bind(':active',1);
+
+        $this->db->bind(':hash', $user->hash);
 
         if($this->db->execute()){
             return true;
@@ -19,6 +47,7 @@ class User{
             return false;
         }
     }
+
 
     public function login($email,$password){
         $this->db->query('SELECT * FROM users WHERE email = :email');

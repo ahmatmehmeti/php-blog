@@ -1,11 +1,10 @@
 <?php
     class Category extends Controller
     {
+        private $db;
         public function __construct()
         {
             $this->db = new Database;
-
-
         }
 
         public function getCategories()

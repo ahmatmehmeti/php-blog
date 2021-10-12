@@ -8,66 +8,61 @@
 
         public function register()
         {
-            if($_SERVER['REQUEST_METHOD'] == 'POST')
-            {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-                $_POST = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
+                $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $data = [
                     'name' => trim($_POST['name']),
-                    'email'=> trim($_POST['email']),
-                    'password'=>trim($_POST['password']),
-                    'created_at'=>date('Y-m-d H:i:s'),
+                    'email' => trim($_POST['email']),
+                    'password' => trim($_POST['password']),
+                    'created_at' => date('Y-m-d H:i:s'),
                     'confirm_password' => trim($_POST['confirm_password']),
                     'name_err' => '',
                     'email_err' => '',
                     'password_err' => '',
-                    'confirm_password_err'
+                    'confirm_password_err' => ''
                 ];
-                if(empty($data['email'])){
+                if (empty($data['email'])) {
                     $data['email_err'] = 'Please enter email';
                 } else {
-                    if($this->userModel->findUserByEmail($data['email'])){
+                    if ($this->userModel->findUserByEmail($data['email'])) {
                         $data['email_err'] = 'Email is already taken';
                     }
                 }
 
-                if(empty($data['name'])){
+                if (empty($data['name'])) {
                     $data['name_err'] = 'Please enter name';
                 }
 
-                if(empty($data['password'])){
+                if (empty($data['password'])) {
                     $data['password_err'] = 'Please enter password';
-                }elseif(strlen($data['password']) < 6){
-                        $data['password_err'] = 'Password must be at least 6 characters';
+                } elseif (strlen($data['password']) < 6) {
+                    $data['password_err'] = 'Password must be at least 6 characters';
                 }
 
-                if(empty($data['confirm_password'])){
+                if (empty($data['confirm_password'])) {
                     $data['confirm_password_err'] = 'Please enter password';
-                }elseif(($data['password']) !=  ($data['confirm_password'])){
+                } elseif (($data['password']) != ($data['confirm_password'])) {
                     $data['confirm_password_err'] = 'Password do not match';
                 }
 
-                if(empty($data['email_err']) && empty($data['name_err']) && empty($data['password_err']) &&
-                    empty($data['confirm_password_err'])){
+                if (empty($data['email_err']) && empty($data['name_err']) && empty($data['password_err']) &&
+                    empty($data['confirm_password_err'])) {
 
-                    $data['password'] = password_hash($data['password'],PASSWORD_DEFAULT);
-
-                    if($this->userModel->register($data)){
-                        flash('register_success','You are registered and can log in');
-
+                    $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+                    $this->userModel->register($data);
+                        flash('register_success', 'Please check your email to activate the account!');
                         redirect('users/login');
-                    }else{
-                        die('Something went wrong');
-                    }
-                }else{
+
+                } else {
                     $this->view('users/register', $data);
                 }
 
-            }else{
+            } else {
                 $data = [
                     'name' => '',
-                    'email'=> '',
-                    'password'=>'',
+                    'email' => '',
+                    'password' => '',
                     'confirm_password' => '',
                     'name_err' => '',
                     'email_err' => '',
@@ -75,41 +70,40 @@
                     'confirm_password_err'
                 ];
 
-                $this->view('users/register',$data);
+                $this->view('users/register', $data);
             }
         }
 
         public function login()
         {
-            if($_SERVER['REQUEST_METHOD'] == 'POST')
-            {
-                $_POST = filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $data = [
-                    'email'=> trim($_POST['email']),
-                    'password'=>trim($_POST['password']),
-                    'remember'=>$_POST['remember'],
+                    'email' => trim($_POST['email']),
+                    'password' => trim($_POST['password']),
+                    'remember' => $_POST['remember'],
                     'email_err' => '',
                     'password_err' => '',
                 ];
 
 
-                if(empty($data['email'])){
+                if (empty($data['email'])) {
                     $data['email_err'] = 'Please enter email';
                 }
 
-                if(empty($data['password'])){
+                if (empty($data['password'])) {
                     $data['password_err'] = 'Please enter password';
                 }
 
-                if($this->userModel->findUserByEmail($data['email'])){
+                if ($this->userModel->findUserByEmail($data['email'])) {
 
-                }else{
+                } else {
                     $data['email_err'] = 'No user found';
                 }
 
                 if (!empty($_POST["remember"])) {
-                    setcookie ("email",$_POST["email"],time()+ (10 * 365 * 24 * 60 * 60));
-                    setcookie ("password",$_POST["password"],time()+ (10 * 365 * 24 * 60 * 60));
+                    setcookie("email", $_POST["email"], time() + (10 * 365 * 24 * 60 * 60));
+                    setcookie("password", $_POST["password"], time() + (10 * 365 * 24 * 60 * 60));
                 } else {
                     if (isset($_COOKIE["email"])) {
                         setcookie("email", "");
@@ -120,27 +114,27 @@
                 }
 
 
-                if(empty($data['email_err']) && empty($data['password_err'])){
-                    $loggedInUser = $this->userModel->login($data['email'] , $data['password']);
+                if (empty($data['email_err']) && empty($data['password_err'])) {
+                    $loggedInUser = $this->userModel->login($data['email'], $data['password']);
 
-                    if($loggedInUser){
+                    if ($loggedInUser) {
                         $this->createUserSession($loggedInUser);
-                    }else{
+                    } else {
                         $data['password_err'] = 'Password incorrect';
                     }
                     $this->view('users/login', $data);
-                }else{
+                } else {
                     $this->view('users/login', $data);
                 }
-            }else{
+            } else {
                 $data = [
-                    'email'=> '',
-                    'password'=>'',
+                    'email' => '',
+                    'password' => '',
                     'email_err' => '',
                     'password_err' => '',
                 ];
 
-                $this->view('users/login',$data);
+                $this->view('users/login', $data);
             }
         }
 
@@ -162,5 +156,18 @@
             session_destroy();
 
             redirect('users/login');
+        }
+
+        public function verify()
+        {
+            $this->userModel->verify();
+            $data = [
+                'email' => '',
+                'password' => '',
+                'email_err' => '',
+                'password_err' => '',
+            ];
+            flash('register_success', 'Your account have been activated!');
+             $this->view('users/login', $data);
         }
     }
