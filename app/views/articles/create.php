@@ -4,28 +4,28 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header" ><b>Add new article</b></div>
-                <div class="card-body"">
+                <div class="card-body">
                     <form action="<?php echo URLROOT; ?>/articles/create" method="post" enctype="multipart/form-data">
                         <div class="form-group">
-                            <label for="name">Title: <sup>*</sup></label>
+                            <label for="name">Title:</label>
                             <input type="text" name="title" class="form-control form-control-lg <?php echo (!empty($data['title_err'])) ? 'is-invalid' : ''; ?>">
                             <span class="invalid-feedback"><?php echo $data['title_err']; ?></span>
                         </div>
 
-                        <div class="form-group">
-                            <label for="body">Description:*</label>
+                        <div class="form-group mt-2">
+                            <label for="body">Description:</label>
                             <textarea class="form-control <?php echo (!empty($data['body_err'])) ? 'is-invalid' : '' ?>" name="body" id="editor"
                                       rows="10"></textarea>
                             <span class="invalid-feedback"><?php echo $data['body_err'] ?></span>
                         </div>
 
-                        <div class="form-group">
-                            <label for="name">Image: <sup>*</sup></label>
+                        <div class="form-group mt-2">
+                            <label for="name">Image:</label>
                             <input type="file" name="image" class="form-control form-control-lg <?php echo (!empty($data['image_err'])) ? 'is-invalid' : ''; ?>">
                             <span class="invalid-feedback"><?php echo $data['image_err']; ?></span>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group mt-2">
                             <label for="tags">Tags:</label>
                             <select multiple="multiple" class="form-control multiple <?php echo (!empty($data['tags_err'])) ? 'is-invalid' : '' ?>" name="tags[]" id="tags">
                                 <?php foreach ($data['tags'] as $tag) : ?>
@@ -35,14 +35,20 @@
                             <span class="invalid-feedback"><?php echo $data['tags_err'] ?></span>
                         </div>
 
-                        <div class="form-group">
-                            <label for="category">Category:*</label>
+                        <div class="form-group mt-2">
+                            <label for="category">Category:</label>
                             <select class="form-control <?php echo (!empty($data['category_err'])) ? 'is-invalid' : '' ?>" name="category_id" id="category">
                                 <?php foreach ($data['categories'] as $category) : ?>
                                     <option value="<?php echo $category->id ?>"> <?php echo $category->name ?></option>
                                 <?php endforeach;?>
                             </select>
                             <span class="invalid-feedback"><?php echo $data['category_err'] ?></span>
+                        </div>
+
+                        <div class="form-group mt-2">
+                            <label for="name">Select Date:</label>
+                            <input type="date" name="created_at" class="form-control form-control-lg <?php echo (!empty($data['date_err'])) ? 'is-invalid' : ''; ?>">
+                            <span class="invalid-feedback"><?php echo $data['date_err']; ?></span>
                         </div>
 
                         <div class="row">

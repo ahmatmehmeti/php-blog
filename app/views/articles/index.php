@@ -29,6 +29,7 @@
                                 <td><?php echo $article->category_id; ?></td>
                                 <td><?php echo $article->created_at; ?></td>
                                 <td> <a href="<?php echo URLROOT; ?>/articles/edit/<?php echo $article-> id; ?>" class="btn btn-warning ;">Edit</a>
+                                <a href="<?php echo URLROOT; ?>/articles/approveArticle/<?php echo $article-> id; ?>" class="btn btn-warning ;">Approve</a>
 
                                 </td>
                             </tr>

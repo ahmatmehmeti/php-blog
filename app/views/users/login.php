@@ -20,7 +20,7 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <input type="submit" value="Register" class="btn btn-success btn-block mt-2">
+                            <input type="submit" value="Submit" class="btn btn-success btn-block mt-2">
                         </div>
                         <div class="col mt-2">
                             <label>

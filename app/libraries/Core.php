@@ -1,13 +1,13 @@
 <?php
     class Core
     {
-        protected $currentController = 'Pages';
+        protected $currentController = 'Home';
         protected $currentMethod = 'index';
         protected $params = [];
 
         public function __construct(){
             $url = $this->getUrl();
-            if (isset($url[0]) && !empty($url[0]) && $url[0] != 'pages.php') {
+            if (isset($url[0]) && !empty($url[0]) && $url[0] != 'home.php') {
                 if (file_exists('../app/controllers/' . ucwords($url[0]) . '.php')) {
                     $this->currentController = ucwords($url[0]);
                     unset($url[0]);

@@ -23,27 +23,27 @@
                     'confirm_password_err' => ''
                 ];
                 if (empty($data['email'])) {
-                    $data['email_err'] = 'Please enter email';
+                    $data['email_err'] = 'Please enter email!';
                 } else {
                     if ($this->userModel->findUserByEmail($data['email'])) {
-                        $data['email_err'] = 'Email is already taken';
+                        $data['email_err'] = 'Email is already taken!';
                     }
                 }
 
                 if (empty($data['name'])) {
-                    $data['name_err'] = 'Please enter name';
+                    $data['name_err'] = 'Please enter name!';
                 }
 
                 if (empty($data['password'])) {
-                    $data['password_err'] = 'Please enter password';
+                    $data['password_err'] = 'Please enter password!';
                 } elseif (strlen($data['password']) < 6) {
-                    $data['password_err'] = 'Password must be at least 6 characters';
+                    $data['password_err'] = 'Password must be at least 6 characters!';
                 }
 
                 if (empty($data['confirm_password'])) {
-                    $data['confirm_password_err'] = 'Please enter password';
-                } elseif (($data['password']) != ($data['confirm_password'])) {
-                    $data['confirm_password_err'] = 'Password do not match';
+                    $data['confirm_password_err'] = 'Please enter confirm password!';
+                } elseif (($data['password']) != ($data['confirm_password!'])) {
+                    $data['confirm_password_err'] = 'Password do not match!';
                 }
 
                 if (empty($data['email_err']) && empty($data['name_err']) && empty($data['password_err']) &&
@@ -88,11 +88,11 @@
 
 
                 if (empty($data['email'])) {
-                    $data['email_err'] = 'Please enter email';
+                    $data['email_err'] = 'Please enter email!';
                 }
 
                 if (empty($data['password'])) {
-                    $data['password_err'] = 'Please enter password';
+                    $data['password_err'] = 'Please enter password!';
                 }
 
                 if ($this->userModel->findUserByEmail($data['email'])) {
@@ -173,19 +173,28 @@
         {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $data = [
-                    'email' => $_POST['email']
+                    'email' => $_POST['email'],
+                    'email_err' => ''
                 ];
-                $this->userModel->send_link($data);
-                flash('send_link_message', 'Please check your email to reset the password!!');
+
+                if (empty($data['email'])) {
+                    $data['email_err'] = 'Please enter email!';
+                }
+                if (empty($data['email_err'])) {
+                    $this->userModel->send_link($data);
+                    flash('send_link_message', 'Please check your email to reset the password!');
+                }else{
+                    $this->view('users/send_link', $data);
+                }
+
             }else{
                 $data = [
-                    'email' => ''
+                    'email' => '',
+                    'email_err'=>''
                 ];
+                $this->view('users/send_link', $data);
             }
-
-            $this->view('users/send_link', $data);
         }
-
 
         public function reset_pass()
         {
@@ -197,15 +206,15 @@
                 ];
 
                 if (empty($data['password'])) {
-                    $data['password_err'] = 'Please enter password';
+                    $data['password_err'] = 'Please enter password!';
                 } elseif (strlen($data['password']) < 6) {
-                    $data['password_err'] = 'Password must be at least 6 characters';
+                    $data['password_err'] = 'Password must be at least 6 characters!';
                 }
 
                 if (empty($data['confirm_password'])) {
-                    $data['confirm_password_err'] = 'Please enter password';
+                    $data['confirm_password_err'] = 'Please enter confirm password!';
                 } elseif (($data['password']) != ($data['confirm_password'])) {
-                    $data['confirm_password_err'] = 'Password do not match';
+                    $data['confirm_password_err'] = 'Password do not match!';
                 }
 
                 if (empty($data['password_err']) && empty($data['confirm_password_err'])) {
@@ -213,16 +222,19 @@
                     $this->userModel->reset_pass($data);
                     flash('reset_pass_message', 'Your Password have been changed,Please log in!');
                     redirect('users/login');
+                }else{
+                    $this->view('users/reset_pass' ,$data);
                 }
+
             }else{
                 $data = [
                     'email' => '',
                     'password' => '',
                     'confirm_password'=> ''
                     ];
-            }
 
-            $this->view('users/reset_pass' ,$data);
+                $this->view('users/reset_pass' ,$data);
+            }
         }
 
     }

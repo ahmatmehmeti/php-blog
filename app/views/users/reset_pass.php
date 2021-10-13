@@ -9,19 +9,19 @@
                         <span class="invalid-feedback"><?php echo $data['email_err']; ?></span>
                     </div>
                     <div class="form-group">
-                        <label for="password">New Password: <sup>*</sup></label>
+                        <label for="password">New Password: </label>
                         <input type="password" name="password" class="form-control form-control-lg <?php echo (!empty($data['password_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['password']; ?>">
                         <span class="invalid-feedback"><?php echo $data['password_err']; ?></span>
                     </div>
                     <div class="form-group">
-                        <label for="confirm_password">Confirm New Password: <sup>*</sup></label>
+                        <label for="confirm_password">Confirm New Password:</label>
                         <input type="password" name="confirm_password" class="form-control form-control-lg <?php echo (!empty($data['confirm_password_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['confirm_password']; ?>">
                         <span class="invalid-feedback"><?php echo $data['confirm_password_err']; ?></span>
                     </div>
 
                     <div class="row">
                         <div class="col">
-                            <input type="submit" value="Submit" class="btn btn-success btn-block mt-1">
+                            <input type="submit" value="Submit" class="btn btn-success btn-block mt-2">
                         </div>
                     </div>
                 </form>

@@ -47,7 +47,7 @@
 //                  'status' =>$_POST['status'],
                     'categories' => $categories,
                     'tags' => $_POST['tags'],
-                    'created_at'=>date('Y-m-d H:i:s'),
+                    'created_at' => $_POST['created_at'],
                     'title_err' => '',
                     'slug_err' => '',
                     'category_err' => '',
@@ -57,32 +57,36 @@
                 ];
 
                 if(empty($data['title'])){
-                    $data['title_err'] = 'Please enter title';
+                    $data['title_err'] = 'Please enter title!';
                 }
 
                 if(empty($data['slug'])){
-                    $data['slug_err'] = 'Please enter slug';
+                    $data['slug_err'] = 'Please enter slug!';
                 }
 
                 if(empty($data['body'])){
-                    $data['body_err'] = 'Please enter body';
+                    $data['body_err'] = 'Please enter body!';
                 }
 
                 if(empty($data['category_id'])){
-                    $data['category_err'] = 'Please choose category';
+                    $data['category_err'] = 'Please choose category!';
                 }
 
                 if(empty($data['image'])){
-                    $data['image_err'] = 'Please choose image';
+                    $data['image_err'] = 'Please choose image!';
                 }
 
-                if(empty($data['title_err']) && empty($data['slug_err']) && empty($data['body_err']) && empty($data['category_err']) && empty($data['tags_err']) && empty($data['image_err'])){
+                if(empty($data['created_at'])){
+                    $data['created_at_err'] = 'Please choose date!';
+                }
+
+                if(empty($data['title_err']) && empty($data['slug_err']) && empty($data['body_err']) && empty($data['category_err']) && empty($data['tags_err']) && empty($data['image_err']) && empty($data['created_at_err'])){
                     if($this->articleModel->addArticles($data)){
                         $this->articleModel->tagsArticle($data);
-                        flash('articles _message','Article created successfully');
+                        flash('articles _message','Article created successfully!');
                         redirect('articles/index');
                     }else{
-                        die('Something went wrong');
+                        die('Something went wrong!');
                     }
                 } else{
                     $this->view('articles/create', $data);
@@ -97,6 +101,7 @@
                     'body' => '',
                     'categories' => $categories,
                     'tags' => $tags,
+                    'date'=>'',
                     'image' => '',
                     'user_id' =>'',
                     'status' =>'',
@@ -134,7 +139,7 @@
 //                'status' =>$_POST['status'],
                     'categories' => $categories,
                     /* 'tags' => $_POST['tags'],*/
-                    'created_at'=>date('Y-m-d H:i:s'),
+                    'created_at' => $_POST['created_at'],
                     'title_err' => '',
                     'slug_err' => '',
                     'category_err' => '',
@@ -163,7 +168,11 @@
                     $data['image_err'] = 'Please choose image';
                 }
 
-                if(empty($data['title_err']) && empty($data['slug_err']) && empty($data['body_err']) && empty($data['category_err'])/* && empty($data['tags_err']) */&& empty($data['image_err'])){
+                if(empty($data['created_at'])){
+                    $data['created_at_err'] = 'Please choose date!';
+                }
+
+                if(empty($data['title_err']) && empty($data['slug_err']) && empty($data['body_err']) && empty($data['category_err'])/* && empty($data['tags_err']) */&& empty($data['image_err']) && empty($data['created_at_err'])){
                     if($this->articleModel->updateArticle($data)){
 
                         flash('articles_message','Article updated successfully');
@@ -185,6 +194,7 @@
                     'body'=> $articles->body,
                     'image' => $articles->image,
                     'category_id' => $articles->category_id,
+                    'created_at' => $articles->created_at,
                     'user_id' => '',
                     'categories' => $categories,
                     /*'tags' => $tags,*/
@@ -207,6 +217,16 @@
             }
         }
 
+        public function approveArticle($id)
+        {
+            $this->articleModel->approveArticles($id);
+            $articles = $this->articleModel->getArticles();
+            $data= [
+                'articles' => $articles
+            ];
+            flash('articles_message', 'Article Approved');
+            $this->view('articles/index', $data);
+        }
 
 
     }

@@ -43,16 +43,11 @@
             $row = $this->db->single();
 
             foreach ($data['tags'] as $tag) {
-                $this->db->query('INSERT INTO article_tag (articles_id, tags_id) VALUES (:articles_id, :tags_id)');
-                $this->db->bind(':articles_id', $row->id);
-                $this->db->bind(':tags_id', $tag);
-                if ($this->db->execute()) {
-                    return true;
-                } else {
-                    return false;
-                }
+                $this->db->query('INSERT INTO article_tag (article_id, tag_id) VALUES (:article_id, :tag_id)');
+                $this->db->bind(':article_id', $row->id);
+                $this->db->bind(':tag_id', $tag);
+                $this->db->execute();
             }
-
         }
 
         public  function updateArticle($data)
@@ -91,4 +86,19 @@
                 return false;
             }
         }
+
+
+        public  function approveArticles($id)
+        {
+            $this->db->query('UPDATE articles SET status = :status WHERE id = :id');
+            $this->db->bind(':status',1);
+            $this->db->bind(':id', $id);
+
+            if($this->db->execute()){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
     }

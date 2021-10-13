@@ -7,37 +7,42 @@
                 <div class="card-body"">
                 <form action="<?php echo URLROOT; ?>/articles/edit/<?php echo $data['id']?>" method="post">
                     <div class="form-group">
-                        <label for="name">Title: <sup>*</sup></label>
+                        <label for="name">Title:</label>
                         <input type="text" name="title" class="form-control form-control-lg <?php echo (!empty($data['title_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['title']; ?>">
                         <span class="invalid-feedback"><?php echo $data['title_err']; ?></span>
                     </div>
-                    <div class="form-group">
-                        <label for="name">Body: <sup>*</sup></label>
+                    <div class="form-group mt-2">
+                        <label for="name">Body:</label>
                         <input type="text" name="body" class="form-control form-control-lg <?php echo (!empty($data['body_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['body']; ?>">
                         <span class="invalid-feedback"><?php echo $data['body_err']; ?></span>
                     </div>
-                    <div class="form-group">
-                        <label for="name">Image: <sup>*</sup></label>
+                    <div class="form-group mt-2">
+                        <label for="name">Image:</label>
                         <input type="file" name="image" class="form-control form-control-lg <?php echo (!empty($data['image_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['image']; ?>">
                         <span class="invalid-feedback"><?php echo $data['image_err']; ?></span>
                     </div>
-                    <!--                        <div class="form-group">
+                    <div class="form-group mt-2">
                             <label for="tags">Tags:</label>
-                            <select multiple="multiple" class="form-control multiple <?php /*echo (!empty($data['tags_err'])) ? 'is-invalid' : '' */?>" name="tags[]" id="tags">
-                                <?php /*foreach ($data['tags'] as $tag) : */?>
-                                    <option><?php /*echo $tag->name */?></option>
-                                <?php /*endforeach;*/?>
+                            <select multiple="multiple" class="form-control multiple <?php echo (!empty($data['tags_err'])) ? 'is-invalid' : '' ?>" name="tags[]" id="tags">
+                                <?php foreach ($data['tags'] as $tag) : ?>
+                                    <option value="<?php echo $tag->name; ?>"><?php echo $tag->name ?></option>
+                                <?php endforeach;?>
                             </select>
-                            <span class="invalid-feedback"><?php /*echo $data['tags_err'] */?></span>
-                        </div>-->
-                    <div class="form-group">
-                        <label for="category">Category:*</label>
+                            <span class="invalid-feedback"><?php echo $data['tags_err'] ?></span>
+                        </div>
+                    <div class="form-group mt-2">
+                        <label for="category">Category:</label>
                         <select class="form-control <?php echo (!empty($data['category_err'])) ? 'is-invalid' : '' ?>" name="category_id" id="category" value="<?php echo $data['category_id']; ?>">
                             <?php foreach ($data['categories'] as $category) : ?>
                                 <option value="<?php echo $category->id ?>"> <?php echo $category->name ?></option>
                             <?php endforeach;?>
                         </select>
                         <span class="invalid-feedback"><?php echo $data['category_err'] ?></span>
+                    </div>
+                    <div class="form-group mt-2">
+                        <label for="name">Select Date:</label>
+                        <input type="date" name="created_at" class="form-control form-control-lg <?php echo (!empty($data['date_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['created_at']; ?>">
+                        <span class="invalid-feedback"><?php echo $data['date_err']; ?></span>
                     </div>
                     <div class="row">
                         <div class="col">
