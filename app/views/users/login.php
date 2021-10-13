@@ -3,6 +3,7 @@
         <div class="col-md-4 mx-auto">
             <div class="card card-body bg-light mt-5">
                 <?php flash('register_success'); ?>
+                <?php flash('reset_pass_message');?>
                 <h2>Login</h2>
                 <form action="<?php echo URLROOT; ?>/users/login" method="post">
                     <div class="form-group">
@@ -19,7 +20,7 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <input type="submit" value="Register" class="btn btn-success btn-block mt-1">
+                            <input type="submit" value="Register" class="btn btn-success btn-block mt-2">
                         </div>
                         <div class="col mt-2">
                             <label>
@@ -27,7 +28,7 @@
                             </label>
                         </div>
                         <div class="col">
-                            <a href="<?php echo URLROOT; ?>/users/register" class="btn btn-light btn-block mt-1">No account? Register</a>
+                            <a href="<?php echo URLROOT; ?>/users/send_link" class="btn btn-light btn-block">Forgot password?</a>
                         </div>
                     </div>
                 </form>

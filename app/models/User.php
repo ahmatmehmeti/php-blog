@@ -17,8 +17,8 @@ class User{
 
         if($this->db->execute()){
             $to      = $data['email'];
-            $subject = 'the subject';
-            $message = "Confirm your Email,
+            $subject = 'Confirmation for your email';
+            $message = "Confirm your Email by clicking this link,
                http://localhost/php-blog/users/verify?hash=$hash
             ";
             $headers = 'From: ahmat.mehmeti97@gmail.com';
@@ -33,12 +33,10 @@ class User{
         $this->db->query('SELECT * FROM users WHERE active = :active and hash = :hash');
         $this->db->bind(':active', 0);
         $this->db->bind(':hash', $_GET['hash']);
-
         $user = $this->db->single();
 
         $this->db->query('UPDATE users SET active = :active WHERE hash = :hash');
         $this->db->bind(':active',1);
-
         $this->db->bind(':hash', $user->hash);
 
         if($this->db->execute()){
@@ -74,4 +72,34 @@ class User{
             return false;
         }
     }
+
+    public function send_link($data)
+    {
+        $email = md5($data['email']);
+        $to      = $data['email'];
+        $subject = 'Confirmation for resetting password';
+        $message = "Reset your Password by clicking this link,
+               http://localhost/php-blog/users/reset_pass?email=$email
+            ";
+        $headers = 'From: ahmat.mehmeti97@gmail.com';
+        mail($to, $subject, $message, $headers);
+    }
+
+    public function reset_pass($data)
+    {
+        $this->db->query('SELECT * FROM users WHERE md5(email) = :email');
+        $this->db->bind(':email', $data['email']);
+        $user = $this->db->single();
+
+        if($this->db->rowCount() > 0){
+            $this->db->query('UPDATE users SET password = :password WHERE email = :email');
+            $this->db->bind(':email',$user->email);
+            $this->db->bind(':password', $data['password']);
+
+            $this->db->execute();
+        } else {
+            return false;
+        }
+    }
+
 }

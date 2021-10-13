@@ -113,10 +113,8 @@
                     }
                 }
 
-
                 if (empty($data['email_err']) && empty($data['password_err'])) {
                     $loggedInUser = $this->userModel->login($data['email'], $data['password']);
-
                     if ($loggedInUser) {
                         $this->createUserSession($loggedInUser);
                     } else {
@@ -170,4 +168,61 @@
             flash('register_success', 'Your account have been activated!');
              $this->view('users/login', $data);
         }
+
+        public function send_link()
+        {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $data = [
+                    'email' => $_POST['email']
+                ];
+                $this->userModel->send_link($data);
+                flash('send_link_message', 'Please check your email to reset the password!!');
+            }else{
+                $data = [
+                    'email' => ''
+                ];
+            }
+
+            $this->view('users/send_link', $data);
+        }
+
+
+        public function reset_pass()
+        {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $data = [
+                    'email' => $_POST['email'],
+                    'password' => $_POST['password'],
+                    'confirm_password' => $_POST['confirm_password']
+                ];
+
+                if (empty($data['password'])) {
+                    $data['password_err'] = 'Please enter password';
+                } elseif (strlen($data['password']) < 6) {
+                    $data['password_err'] = 'Password must be at least 6 characters';
+                }
+
+                if (empty($data['confirm_password'])) {
+                    $data['confirm_password_err'] = 'Please enter password';
+                } elseif (($data['password']) != ($data['confirm_password'])) {
+                    $data['confirm_password_err'] = 'Password do not match';
+                }
+
+                if (empty($data['password_err']) && empty($data['confirm_password_err'])) {
+                    $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+                    $this->userModel->reset_pass($data);
+                    flash('reset_pass_message', 'Your Password have been changed,Please log in!');
+                    redirect('users/login');
+                }
+            }else{
+                $data = [
+                    'email' => '',
+                    'password' => '',
+                    'confirm_password'=> ''
+                    ];
+            }
+
+            $this->view('users/reset_pass' ,$data);
+        }
+
     }
