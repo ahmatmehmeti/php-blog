@@ -44,7 +44,7 @@
                     'image' => $destination,
                     'user_id' =>$_SESSION['user_id'],
                     'category_id' =>$_POST['category_id'],
-//                  'status' =>$_POST['status'],
+                     'status' =>$_POST['status'],
                     'categories' => $categories,
                     'tags' => $_POST['tags'],
                     'created_at' => $_POST['created_at'],
@@ -117,28 +117,28 @@
                 $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
                 $categories = $this->categoryModel->getCategories();
-                /*$tags = $this->tagModel->getTags();*/
+                $tags = $this->tagModel->getTags();
 
-   /*             if(isset($_FILES['image']['name']))
+               if(isset($_FILES['image']['name']))
                 {
                     $folder = "img/";
                     $destination = $folder . $_FILES['image']['name'];
                     move_uploaded_file($_FILES['image']['tmp_name'], $destination);
-                }*/
+                }
 
-                $slug = preg_replace('/[^a-z0-9]+/i', '-', trim(strtolower($_POST['title'])));
+                $slug = preg_replace('/[^a-z0-9]+/i', '-', trim(strtolower($_POST['title']) ));
 
                 $data = [
                     'title' => $_POST['title'],
+                    'id' => $id,
                     'slug' => $slug,
                     'body' => $_POST['body'],
                     /*'image' => $destination,*/
-                    'image' => $_POST['image'],
                     'user_id' =>$_SESSION['user_id'],
                     'category_id' =>$_POST['category_id'],
-//                'status' =>$_POST['status'],
+                   /* 'status' =>$_POST['status'],*/
                     'categories' => $categories,
-                    /* 'tags' => $_POST['tags'],*/
+                     'tags' =>$tags,
                     'created_at' => $_POST['created_at'],
                     'title_err' => '',
                     'slug_err' => '',
@@ -164,40 +164,37 @@
                     $data['category_err'] = 'Please choose category';
                 }
 
-                if(empty($data['image'])){
+               /* if(empty($data['image'])){
                     $data['image_err'] = 'Please choose image';
-                }
+                }*/
 
                 if(empty($data['created_at'])){
                     $data['created_at_err'] = 'Please choose date!';
                 }
 
-                if(empty($data['title_err']) && empty($data['slug_err']) && empty($data['body_err']) && empty($data['category_err'])/* && empty($data['tags_err']) */&& empty($data['image_err']) && empty($data['created_at_err'])){
-                    if($this->articleModel->updateArticle($data)){
-
-                        flash('articles_message','Article updated successfully');
-                        redirect('articles/index');
-                    }else{
-                        die('Something went wrong');
-                    }
+                if(empty($data['title_err']) && empty($data['slug_err']) && empty($data['body_err']) && empty($data['category_err']) && empty($data['tags_err']) /*&& empty($data['image_err']) */&& empty($data['created_at_err'])){
+                    $this->articleModel->updateArticle($data);
+                    $this->articleModel->updateTagsArticle($data);
+                            flash('articles_message','Article updated successfully');
+                            redirect('articles/index');
                 } else{
                     $this->view('articles/create', $data);
                 }
             }else{
                 $articles = $this->articleModel->getArticlesById($id);
                 $categories = $this->categoryModel->getCategories();
-                /*$tags = $this->tagModel->getTags();*/
+                $tags = $this->tagModel->getTags();
 
                 $data = [
                     'id'=>$id,
                     'title' => $articles->title,
                     'body'=> $articles->body,
-                    'image' => $articles->image,
+                    /*'image' => '',*/
                     'category_id' => $articles->category_id,
                     'created_at' => $articles->created_at,
                     'user_id' => '',
                     'categories' => $categories,
-                    /*'tags' => $tags,*/
+                    'tags' => $tags,
                 ];
                 $this->view('articles/edit', $data);
             }
@@ -228,5 +225,17 @@
             $this->view('articles/index', $data);
         }
 
+        public function show($id){
+            $article = $this->articleModel->getArticlesById($id);
+            $categories = $this->categoryModel->getCategories();
+            $tags = $this->tagModel->getTags();
+            $data = [
+                'article' => $article,
+                'categories' => $categories,
+                'tags' => $tags,
+            ];
+            $this->view('articles/show', $data);
+
+        }
 
     }

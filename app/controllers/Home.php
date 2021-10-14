@@ -3,20 +3,22 @@
     {
         public function __construct()
         {
+            $this->articleModel = $this->model('Article');
+            $this->categoryModel = $this->model('Category');
 
         }
          public function index(){
-
+             $articles = $this->articleModel->getArticles();
+             $categories = $this->categoryModel->getCategories();
             $data = [
-                'title' => 'Welcome',
-                'description'=>'Description about this post'
+                'categories' => $categories,
+                'articles' => $articles
             ];
              $this->view('home/index', $data);
          }
+
         public function about(){
             $data = [
-                'title'=>'About us',
-                'description'=>'Description about this post '
             ];
             $this->view('home/about', $data);
         }

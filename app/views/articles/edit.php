@@ -18,7 +18,7 @@
                     </div>
                     <div class="form-group mt-2">
                         <label for="name">Image:</label>
-                        <input type="file" name="image" class="form-control form-control-lg <?php echo (!empty($data['image_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['image']; ?>">
+                        <input type="file" name="image" class="form-control form-control-lg <?php echo (!empty($data['image_err'])) ? 'is-invalid' : ''; ?>">
                         <span class="invalid-feedback"><?php echo $data['image_err']; ?></span>
                     </div>
                     <div class="form-group mt-2">
@@ -32,9 +32,9 @@
                         </div>
                     <div class="form-group mt-2">
                         <label for="category">Category:</label>
-                        <select class="form-control <?php echo (!empty($data['category_err'])) ? 'is-invalid' : '' ?>" name="category_id" id="category" value="<?php echo $data['category_id']; ?>">
+                        <select class="form-control <?php echo (!empty($data['category_err'])) ? 'is-invalid' : '' ?>" name="category_id" id="category" >
                             <?php foreach ($data['categories'] as $category) : ?>
-                                <option value="<?php echo $category->id ?>"> <?php echo $category->name ?></option>
+                                <option value="<?php echo $data['category_id'] ?>"> <?php echo $category->name ?></option>
                             <?php endforeach;?>
                         </select>
                         <span class="invalid-feedback"><?php echo $data['category_err'] ?></span>
