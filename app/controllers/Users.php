@@ -34,16 +34,18 @@
                     $data['name_err'] = 'Please enter name!';
                 }
 
-                if (empty($data['password'])) {
-                    $data['password_err'] = 'Please enter password!';
-                } elseif (strlen($data['password']) < 6) {
-                    $data['password_err'] = 'Password must be at least 6 characters!';
+                if(empty($data['password'])){
+                    $data['password_err'] = 'Please enter password';
+                }elseif(strlen($data['password']) < 6){
+                    $data['password_err'] = 'Please must be at least 6 characters';
                 }
 
-                if (empty($data['confirm_password'])) {
-                    $data['confirm_password_err'] = 'Please enter confirm password!';
-                } elseif (($data['password']) != ($data['confirm_password!'])) {
-                    $data['confirm_password_err'] = 'Password do not match!';
+                if(empty($data['confirm_password'])){
+                    $data['confirm_password_err'] = 'Please enter confirm password';
+                }else{
+                    if($data['password'] != $data['confirm_password']){
+                        $data['confirm_password_err'] = 'Passwords do not match';
+                    }
                 }
 
                 if (empty($data['email_err']) && empty($data['name_err']) && empty($data['password_err']) &&
@@ -139,6 +141,7 @@
         public function createUserSession($user)
         {
             $_SESSION['user_id'] = $user->id;
+            $_SESSION['user_name'] = $user->name;
             $_SESSION['user_email'] = $user->email;
             $_SESSION['user_password'] = $user->password;
             $_SESSION['user_role'] = $user->role;
@@ -148,6 +151,7 @@
         public function logout()
         {
             unset($_SESSION['user_id']);
+            unset($_SESSION['user_name']);
             unset($_SESSION['user_email']);
             unset($_SESSION['user_password']);
             unset($_SESSION['user_role']);

@@ -45,14 +45,14 @@
                         die('Something went wrong');
                     }
                 } else{
-                    $this->view('categories/create', $data);
+                    $this->view('categories/index', $data);
                 }
             }else{
                 $categories = $this->categoryModel->getCategories();
                 $data = [
                     'name' =>'',
                 ];
-                $this->view('categories/create', $data);
+                $this->view('categories/index', $data);
             }
         }
 

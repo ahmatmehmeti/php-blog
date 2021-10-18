@@ -26,9 +26,18 @@
                                         <?php endif; ?>
                                     <?php endforeach; ?>
 
-                                    <?php foreach ($data['tags'] as $tag): ?>
-                                        <button type="button" class="btn btn-secondary btn-sm"><?php echo $tag->name; ?></button>
+                                    <?php foreach ($data['users'] as $user): ?>
+                                        <?php if($data['article']->user_id == $user->id): ?>
+                                            <p><b>Author: </b><?php echo $user->name; ?></p><br>
+                                        <?php endif; ?>
                                     <?php endforeach; ?>
+
+
+                                    <?php foreach ($data['tags'] as $tag): ?>
+                                        <button type="button" class="btn btn-secondary btn-sm"><?php echo $tag; ?></button>
+                                    <?php endforeach; ?>
+
+
                                 </div>
                             </div>
                             <br>

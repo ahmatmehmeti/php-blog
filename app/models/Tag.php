@@ -63,4 +63,24 @@ class Tag extends Controller
             return false;
         }
     }
+
+    public function getTagByArticle($id){
+        $this->db->query("SELECT tag_id FROM article_tag WHERE article_id = :id");
+        $this->db->bind(':id', $id);
+        $tagsIds = $this->db->resultSetASSOC();
+
+
+        $this->db->query("SELECT * FROM tags");
+        $tags = $this->db->resultSetASSOC();
+
+        foreach ($tags as $tag){
+            foreach ($tagsIds as $tId){
+                if(in_array($tag['id'], $tId)){
+                    $tagNames[] = $tag['name'];
+
+                }
+            }
+        }
+        return $tagNames;
+    }
 }

@@ -11,11 +11,32 @@
 
         public function getArticles()
         {
-            $this->db->query('SELECT * FROM articles');
+            $user_loggedIn = $_SESSION['user_id'];
+            $this->db->query('SELECT * FROM articles WHERE user_id = :user_id ORDER BY position ');
+            $this->db->bind(':user_id',$user_loggedIn);
             $results = $this->db->resultSet();
 
             return $results;
         }
+
+        public function getArticlesNotApproved()
+        {
+            $this->db->query('SELECT * FROM articles WHERE status = :status');
+            $this->db->bind(':status',0);
+            $results = $this->db->resultSet();
+
+            return $results;
+        }
+
+        public function getArticlesApproved()
+        {
+            $this->db->query('SELECT * FROM articles WHERE status = :status');
+            $this->db->bind(':status',1);
+            $results = $this->db->resultSet();
+
+            return $results;
+        }
+
 
         public function addArticles($data)
         {
@@ -50,6 +71,23 @@
             }
         }
 
+        public  function updateArticle($data)
+        {
+            $this->db->query('UPDATE articles set title = :title,slug = :slug,body = :body,/*image = :image*/category_id = :category_id WHERE id = :id');
+            $this->db->bind(':id', $data['id']);
+            $this->db->bind(':title', $data['title']);
+            $this->db->bind(':slug', $data['slug']);
+            $this->db->bind(':body', $data['body']);
+            /*$this->db->bind(':image', $data['image']);*/
+            $this->db->bind(':category_id', $data['category_id']);
+
+            if($this->db->execute()){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
         public function updateTagsArticle($data)
         {
             $this->db->query('SELECT id FROM articles WHERE slug = :slug');
@@ -68,22 +106,6 @@
             }
         }
 
-        public  function updateArticle($data)
-        {
-            $this->db->query('UPDATE articles set title = :title,slug = :slug,body = :body,image = :image,category_id = :category_id WHERE id = :id');
-            $this->db->bind(':id', $data['id']);
-            $this->db->bind(':title', $data['title']);
-            $this->db->bind(':slug', $data['slug']);
-            $this->db->bind(':body', $data['body']);
-            /*$this->db->bind(':image', $data['image']);*/
-            $this->db->bind(':category_id', $data['category_id']);
-
-            if($this->db->execute()){
-                return true;
-            }else{
-                return false;
-            }
-        }
         public function getArticlesById($id)
         {
             $this->db->query('SELECT * FROM articles WHERE id = :id');
@@ -93,6 +115,7 @@
 
             return $row;
         }
+
 
         public function deleteArticle($id)
         {
@@ -120,4 +143,25 @@
             }
         }
 
+        public function getArticlesByCategory($id)
+        {
+            $this->db->query('SELECT * FROM articles WHERE category_id = :id AND status = :status');
+            $this->db->bind(':id',$id);
+            $this->db->bind(':status',1);
+            return $this->db->resultSet();
+        }
+
+
+        public function articlesSort()
+        {
+                foreach ($_POST['positions'] as $position){
+                    $index = $position[0];
+                    $newPosition = $position[1];
+
+                    $this->db->query('UPDATE articles SET position = :position WHERE id = :id');
+                    $this->db->bind(':position',$newPosition);
+                    $this->db->bind(':id',$index);
+                    $this->db->execute();
+            }
+        }
     }

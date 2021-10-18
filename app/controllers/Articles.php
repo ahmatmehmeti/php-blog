@@ -12,7 +12,11 @@
 
         public function index()
         {
-            $articles = $this->articleModel->getArticles();
+            if(isAdmin()){
+                $articles = $this->articleModel->getArticlesNotApproved();
+            }else{
+                $articles = $this->articleModel->getArticles();
+            }
             $data = [
                 'articles' => $articles
             ];
@@ -116,9 +120,6 @@
 
                 $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
-                $categories = $this->categoryModel->getCategories();
-                $tags = $this->tagModel->getTags();
-
                if(isset($_FILES['image']['name']))
                 {
                     $folder = "img/";
@@ -137,8 +138,7 @@
                     'user_id' =>$_SESSION['user_id'],
                     'category_id' =>$_POST['category_id'],
                    /* 'status' =>$_POST['status'],*/
-                    'categories' => $categories,
-                     'tags' =>$tags,
+                     'tags' =>$_POST['tags'],
                     'created_at' => $_POST['created_at'],
                     'title_err' => '',
                     'slug_err' => '',
@@ -216,26 +216,42 @@
 
         public function approveArticle($id)
         {
+            if(!isAdmin()){
+                redirect('home/index');
+            }
             $this->articleModel->approveArticles($id);
-            $articles = $this->articleModel->getArticles();
-            $data= [
-                'articles' => $articles
-            ];
             flash('articles_message', 'Article Approved');
-            $this->view('articles/index', $data);
+            redirect('articles/index');
         }
 
         public function show($id){
             $article = $this->articleModel->getArticlesById($id);
             $categories = $this->categoryModel->getCategories();
-            $tags = $this->tagModel->getTags();
+            $tags = $this->tagModel->getTagByArticle($id);
+            $users = $this->userModel->getUsers();
             $data = [
                 'article' => $article,
                 'categories' => $categories,
                 'tags' => $tags,
+                'users' =>$users
             ];
             $this->view('articles/show', $data);
 
         }
 
+        public function getArticlesByCategory($id)
+        {
+            $articles = $this->articleModel->getArticlesByCategory($id);
+            $categories = $this->categoryModel->getCategories();
+            $data = [
+                'categories' => $categories,
+                'articles' => $articles
+            ];
+            $this->view('home/index', $data);
+        }
+
+        public function articlesSort()
+        {
+            $this->articleModel->articlesSort();
+        }
     }

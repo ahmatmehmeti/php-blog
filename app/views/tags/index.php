@@ -6,6 +6,9 @@
             <div class="card">
                 <div class="card-header"><b>Tags</b></div>
                 <div class="card-body" >
+                    <?php if (empty($data['tags'])): ?>
+                        <div class="text-center"><?php echo 'No data available'; ?></div>
+                    <?php else: ?>
                     <table class="table table-bordered">
                         <thead  style="background-color: ghostwhite;">
                         <tr>
@@ -23,6 +26,7 @@
                         <?php endforeach;?>
                         </thead>
                     </table>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

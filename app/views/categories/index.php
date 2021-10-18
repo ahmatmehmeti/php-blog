@@ -1,11 +1,14 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
 <div class="container">
-    <?php flash('category_message'); ?>
+    <?php flash('categories_message'); ?>
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header"><b>Categories</b></div>
                 <div class="card-body" >
+                    <?php if (empty($data['categories'])): ?>
+                        <div class="text-center"><?php echo 'No data available'; ?></div>
+                    <?php else: ?>
                     <table class="table table-bordered">
                         <thead  style="background-color: ghostwhite;">
                         <tr>
@@ -24,6 +27,7 @@
                         <?php endforeach;?>
                         </thead>
                     </table>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

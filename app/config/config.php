@@ -6,4 +6,4 @@
 
     define('APPROOT', dirname(dirname(__FILE__)));
     define('URLROOT','http://localhost/php-blog');
-    define('SITENAME','Php-Blog');
+    define('SITENAME','PHPBLOG');

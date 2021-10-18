@@ -28,25 +28,6 @@ class User{
         }
     }
 
-    public  function verify()
-    {
-        $this->db->query('SELECT * FROM users WHERE active = :active and hash = :hash');
-        $this->db->bind(':active', 0);
-        $this->db->bind(':hash', $_GET['hash']);
-        $user = $this->db->single();
-
-        $this->db->query('UPDATE users SET active = :active WHERE hash = :hash');
-        $this->db->bind(':active',1);
-        $this->db->bind(':hash', $user->hash);
-
-        if($this->db->execute()){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-
     public function login($email,$password){
         $this->db->query('SELECT * FROM users WHERE email = :email');
         $this->db->bind(':email',$email);
@@ -69,6 +50,24 @@ class User{
         if($this->db->rowCount() > 0){
             return true;
         } else {
+            return false;
+        }
+    }
+
+    public  function verify()
+    {
+        $this->db->query('SELECT * FROM users WHERE active = :active and hash = :hash');
+        $this->db->bind(':active', 0);
+        $this->db->bind(':hash', $_GET['hash']);
+        $user = $this->db->single();
+
+        $this->db->query('UPDATE users SET active = :active WHERE hash = :hash');
+        $this->db->bind(':active',1);
+        $this->db->bind(':hash', $user->hash);
+
+        if($this->db->execute()){
+            return true;
+        }else{
             return false;
         }
     }
@@ -102,4 +101,11 @@ class User{
         }
     }
 
+    public function getUsers()
+    {
+        $this->db->query('SELECT * FROM users');
+        $results = $this->db->resultSet();
+
+        return $results;
+    }
 }

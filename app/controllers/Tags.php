@@ -45,14 +45,14 @@ class Tags extends Controller
                     die('Something went wrong');
                 }
             } else{
-                $this->view('tags/create', $data);
+                $this->view('tags/index', $data);
             }
         }else{
             $tags = $this->tagModel->getTags();
             $data = [
                 'name' =>'',
             ];
-            $this->view('tags/create', $data);
+            $this->view('tags/index', $data);
         }
     }
 

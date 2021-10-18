@@ -25,16 +25,16 @@
                             <label for="tags">Tags:</label>
                             <select multiple="multiple" class="form-control multiple <?php echo (!empty($data['tags_err'])) ? 'is-invalid' : '' ?>" name="tags[]" id="tags">
                                 <?php foreach ($data['tags'] as $tag) : ?>
-                                    <option value="<?php echo $tag->name; ?>"><?php echo $tag->name ?></option>
+                                    <option value="<?php echo $tag->id; ?>"><?php echo $tag->name ?></option>
                                 <?php endforeach;?>
                             </select>
                             <span class="invalid-feedback"><?php echo $data['tags_err'] ?></span>
                         </div>
                     <div class="form-group mt-2">
                         <label for="category">Category:</label>
-                        <select class="form-control <?php echo (!empty($data['category_err'])) ? 'is-invalid' : '' ?>" name="category_id" id="category" >
+                        <select class="form-control <?php echo (!empty($data['category_err'])) ? 'is-invalid' : '' ?>" name="category_id" id="category_id">
                             <?php foreach ($data['categories'] as $category) : ?>
-                                <option value="<?php echo $data['category_id'] ?>"> <?php echo $category->name ?></option>
+                                <option value="<?php echo $category->id ?>"> <?php echo $category->name ?></option>
                             <?php endforeach;?>
                         </select>
                         <span class="invalid-feedback"><?php echo $data['category_err'] ?></span>

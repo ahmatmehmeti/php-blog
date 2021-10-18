@@ -1,14 +1,15 @@
 <?php
      class Home extends Controller
     {
-        public function __construct()
+        public function __construct(Database $db)
         {
+            $db -> migrate();
             $this->articleModel = $this->model('Article');
             $this->categoryModel = $this->model('Category');
 
         }
          public function index(){
-             $articles = $this->articleModel->getArticles();
+             $articles = $this->articleModel->getArticlesApproved();
              $categories = $this->categoryModel->getCategories();
             $data = [
                 'categories' => $categories,
@@ -22,5 +23,6 @@
             ];
             $this->view('home/about', $data);
         }
+
 
     }

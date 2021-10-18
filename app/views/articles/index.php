@@ -9,36 +9,82 @@
                     <a href="<?php echo URLROOT; ?>/articles/create" class="btn btn-primary">Add New</button></a>
                 </div>
 
-
                 <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead  style="background-color: ghostwhite;">
-                        <tr>
-                            <th>Title</th>
-                            <th>Body</th>
-                            <th>Image</th>
-                            <th>Category</th>
-                            <th>Created at</th>
-                            <th>Actions</th>
-                        </tr>
-                        <?php foreach ($data['articles'] as $article) : ?>
-                            <tr>
-                                <td><?php echo $article->title; ?></td>
-                                <td><?php echo $article->body; ?></td>
-                                <td><?php echo $article->image; ?></td>
-                                <td><?php echo $article->category_id; ?></td>
-                                <td><?php echo $article->created_at; ?></td>
-                                <td> <a href="<?php echo URLROOT; ?>/articles/edit/<?php echo $article-> id; ?>" class="btn btn-warning ;">Edit</a>
-                                <a href="<?php echo URLROOT; ?>/articles/approveArticle/<?php echo $article-> id; ?>" class="btn btn-warning ;">Approve</a>
-
-                                </td>
-                            </tr>
-                        <?php endforeach;?>
-                        </thead>
-                    </table>
+                    <?php if (empty($data['articles'])): ?>
+                        <div class="text-center"><?php echo 'No data available'; ?></div>
+                    <?php else: ?>
+                        <table class="table table-stripped table-hover table-bordered">
+                            <thead  style="background-color: ghostwhite;">
+                                <tr>
+                                    <th>*</th>
+                                    <th>Title</th>
+                                    <th>Body</th>
+                                    <th>Image</th>
+                                    <th>Category</th>
+                                    <th>Created at</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="row_positions">
+                                <?php foreach ($data['articles'] as $article) : ?>
+                                    <tr data-index="<?php echo $article->id; ?>" data-position="<?php echo $article->position?>">
+                                        <td><?php echo $article->id; ?></td>
+                                        <td><?php echo $article->title; ?></td>
+                                        <td><?php echo substr(strip_tags($article->body), 0, 50), strlen($article->body) > 50 ? "..." : ""  ?></td>
+                                        <td><?php echo $article->image; ?></td>
+                                        <td><?php echo $article->category_id; ?></td>
+                                        <td><?php echo $article->created_at; ?></td>
+                                        <td><?php if($_SESSION['user_role'] == 'admin'): ?>
+                                                <a href="<?php echo URLROOT; ?>/articles/approveArticle/<?php echo $article-> id; ?>" class="btn btn-warning ;">Approve</a>
+                                            <?php else: ?>
+                                                <a href="<?php echo URLROOT; ?>/articles/edit/<?php echo $article-> id; ?>" target="_blank" class="btn btn-warning ;">Edit</a>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach;?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <?php require APPROOT . '/views/inc/footer.php'; ?>
+<script>
+    $(document).ready(function () {
+        $(".table .row_positions").sortable({
+             update:function (event,ui){
+                 $(this).children().each(function (index){
+                    if($(this).attr('data-position') != (index+1)){
+                        $(this).attr('data-position', (index+1)).addClass('updated');
+                    }
+                 });
+
+                 saveNewPositions();
+             }
+        });
+    });
+
+     function saveNewPositions()
+     {
+        var positions = [];
+        $('.updated').each(function (){
+           positions.push([$(this).attr('data-index'),$(this).attr('data-position')]);
+           $(this).removeClass('updated');
+        });
+
+        $.ajax({
+           url:'<?php echo URLROOT;?>/articles/articlesSort',
+           method:'POST',
+           dataType:'text',
+           data:{
+               update: 1,
+               positions:positions
+           },success:function (response){
+               console.log(response);
+            }
+        });
+     }
+
+</script>
