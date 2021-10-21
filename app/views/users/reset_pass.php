@@ -10,13 +10,13 @@
                     </div>
                     <div class="form-group">
                         <label for="password">New Password: </label>
-                        <input type="password" name="password" class="form-control form-control-lg <?php echo (!empty($data['password_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['password']; ?>">
-                        <span class="invalid-feedback"><?php echo $data['password_err']; ?></span>
+                        <input type="password" name="password" class="form-control form-control-lg <?php echo (!empty($data['errors']['password_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['password']; ?>">
+                        <span class="invalid-feedback"><?php echo $data['errors']['password_err']; ?></span>
                     </div>
                     <div class="form-group">
                         <label for="confirm_password">Confirm New Password:</label>
-                        <input type="password" name="confirm_password" class="form-control form-control-lg <?php echo (!empty($data['confirm_password_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['confirm_password']; ?>">
-                        <span class="invalid-feedback"><?php echo $data['confirm_password_err']; ?></span>
+                        <input type="password" name="confirm_password" class="form-control form-control-lg <?php echo (!empty($data['errors']['confirm_password_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['confirm_password']; ?>">
+                        <span class="invalid-feedback"><?php echo $data['errors']['confirm_password_err']; ?></span>
                     </div>
 
                     <div class="row">

@@ -11,9 +11,9 @@ class Tag extends Controller
     {
         $this->db->query('SELECT * FROM tags');
         $results = $this->db->resultSet();
-
         return $results;
     }
+
     public function addTags($data)
     {
         $this->db->query('INSERT INTO tags (name,created_at) VALUE (:name, :created_at)');
@@ -69,7 +69,6 @@ class Tag extends Controller
         $this->db->bind(':id', $id);
         $tagsIds = $this->db->resultSetASSOC();
 
-
         $this->db->query("SELECT * FROM tags");
         $tags = $this->db->resultSetASSOC();
 
@@ -77,7 +76,6 @@ class Tag extends Controller
             foreach ($tagsIds as $tId){
                 if(in_array($tag['id'], $tId)){
                     $tagNames[] = $tag['name'];
-
                 }
             }
         }

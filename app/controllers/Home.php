@@ -1,13 +1,17 @@
 <?php
      class Home extends Controller
     {
-        public function __construct(Database $db)
+        private $db;
+        private $seeders;
+        public function __construct()
         {
-            $db -> migrate();
+            $this->db = new Database();
+            $this->seeders = new Seeders();
             $this->articleModel = $this->model('Article');
             $this->categoryModel = $this->model('Category');
 
         }
+
          public function index(){
              $articles = $this->articleModel->getArticlesApproved();
              $categories = $this->categoryModel->getCategories();
@@ -18,11 +22,15 @@
              $this->view('home/index', $data);
          }
 
-        public function about(){
-            $data = [
-            ];
-            $this->view('home/about', $data);
-        }
+         public function migrate()
+         {
+             $this->db->migrate();
+             redirect('home/index');
+         }
 
-
+         public function seeders()
+         {
+             $this->seeders->allseders();
+             redirect('home/index');
+         }
     }

@@ -7,7 +7,7 @@
                     <div class="form-group">
                         <label for="email">Enter Email To Send You the resetting Password Link:</label>
                         <input type="email" name="email" class="form-control form-control-lg mt-2 <?php echo (!empty($data['email_err'])) ? 'is-invalid' : ''; ?>"
-                               value="<?php /*echo $data['email'];*/ if(isset($_COOKIE["email"])) { echo $_COOKIE["email"]; }?>">
+                               value="<?php if(isset($_COOKIE["email"])) { echo $_COOKIE["email"]; }?>">
                         <span class="invalid-feedback"><?php echo $data['email_err']; ?></span>
                     </div>
                     <div class="row">

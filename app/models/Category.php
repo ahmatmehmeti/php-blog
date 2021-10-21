@@ -11,9 +11,9 @@
         {
             $this->db->query('SELECT * FROM categories');
             $results = $this->db->resultSet();
-
             return $results;
         }
+
         public function addCategories($data)
         {
             $this->db->query('INSERT INTO categories (name,created_at) VALUE (:name, :created_at)');
@@ -46,9 +46,7 @@
         {
             $this->db->query('SELECT * FROM categories WHERE id = :id');
             $this->db->bind(':id', $id);
-
             $row = $this->db->single();
-
             return $row;
         }
 
@@ -56,7 +54,6 @@
         {
             $this->db->query('DELETE FROM categories WHERE id = :id');
             $this->db->bind(':id', $id);
-
             if($this->db->execute()){
                 return true;
             }else{

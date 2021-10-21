@@ -1,4 +1,5 @@
 <?php
+require_once '../app/requests/TagRequest.php';
 class Tags extends Controller
 {
     public function __construct()
@@ -8,6 +9,7 @@ class Tags extends Controller
         }
 
         $this->tagModel = $this->model('Tag');
+        $this->tagsRequest = new TagRequest();
     }
 
     public function index()
@@ -20,91 +22,68 @@ class Tags extends Controller
         $this->view('tags/index', $data);
     }
 
-    public function add(){
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-            $tags = $this->tagModel->getTags();
+    public function store()
+    {
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $tags = $this->tagModel->getTags();
 
-            $data = [
-                'name' => $_POST['name'],
-                'created_at'=>date('Y-m-d H:i:s'),
-                'name_err' => '',
-                'tags'=>$tags
-            ];
+        $data = [
+            'name' => $_POST['name'],
+            'created_at'=>date('Y-m-d H:i:s'),
+            'name_err' => '',
+            'tags'=>$tags,
+            'errors' => []
+        ];
 
-            if(empty($data['name'])){
-                $data['name_err'] = 'Please enter title';
-            }
+        $data = $this->tagsRequest->ValidateForm($data);
 
-            if(empty($data['name_err'])){
-                if($this->tagModel->addTags($data)){
-
-                    flash('tags_message','Tag created successfully');
-                    redirect('tags/index');
-                }else{
-                    die('Something went wrong');
-                }
-            } else{
-                $this->view('tags/index', $data);
-            }
-        }else{
-            $tags = $this->tagModel->getTags();
-            $data = [
-                'name' =>'',
-            ];
+        if(!empty($data['errors'])){
             $this->view('tags/index', $data);
+        }else{
+            $this->tagModel->addTags($data);
+            flash('tags_message','Tag created successfully');
+            redirect('tags/index');
         }
     }
 
     public function edit($id)
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
-
-            $data = [
-                'id' => $id,
-                'name' => trim($_POST['name']),
-                'created_at'=>date('Y-m-d H:i:s'),
-                'name_err' => ''
-            ];
-
-            if (empty($data['name'])) {
-                $data['name_err'] = 'Please enter name';
-            }
-
-            if (empty($data['name_err'])) {
-                if ($this->tagModel->updateTag($data)) {
-                    flash('tag_success', 'Tag has been updated');
-                    redirect('tags/index');
-                } else {
-                    die('Something went wrong');
-                }
-            } else {
-                $this->view('tags/index', $data);
-            }
-        } else {
-            $tag = $this->tagModel->getTagById($id);
-            $data = [
-                'id' => $id,
-                'name' => $tag->name,
-                'name_err' => ''
-            ];
-        }
+        $tag = $this->tagModel->getTagById($id);
+        $data = [
+            'id' => $id,
+            'name' => $tag->name,
+            'name_err' => ''
+        ];
         $this->view('tags/edit', $data);
+    }
+
+    public function update($id)
+    {
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $data = [
+            'id' => $id,
+            'name' => trim($_POST['name']),
+            'created_at'=>date('Y-m-d H:i:s'),
+            'name_err' => '',
+            'errors' => []
+        ];
+
+        $data  = $this->tagsRequest->ValidateForm($data);
+
+        if (!empty($data['errors'])) {
+            $this->view('tags/edit', $data);
+        } else {
+            $this->tagModel->updateTag($data);
+            flash('tags_message', 'Tag has been updated');
+            redirect('tags/index');
+        }
     }
 
     public function delete($id)
     {
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            if($this->tagModel->deleteTag($id)){
-                flash('tags_message', 'Tag Deleted');
-                redirect('tags');
-            }else{
-                die('Something went wrong');
-            }
-        }else{
-            redirect('tags');
-        }
+        $this->tagModel->deleteTag($id);
+        flash('tags_message', 'Tag Deleted');
+        redirect('tags');
     }
 }
+

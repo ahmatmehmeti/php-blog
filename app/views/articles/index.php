@@ -19,8 +19,6 @@
                                     <th>*</th>
                                     <th>Title</th>
                                     <th>Body</th>
-                                    <th>Image</th>
-                                    <th>Category</th>
                                     <th>Created at</th>
                                     <th>Actions</th>
                                 </tr>
@@ -31,8 +29,6 @@
                                         <td><?php echo $article->id; ?></td>
                                         <td><?php echo $article->title; ?></td>
                                         <td><?php echo substr(strip_tags($article->body), 0, 50), strlen($article->body) > 50 ? "..." : ""  ?></td>
-                                        <td><?php echo $article->image; ?></td>
-                                        <td><?php echo $article->category_id; ?></td>
                                         <td><?php echo $article->created_at; ?></td>
                                         <td><?php if($_SESSION['user_role'] == 'admin'): ?>
                                                 <a href="<?php echo URLROOT; ?>/articles/approveArticle/<?php echo $article-> id; ?>" class="btn btn-warning ;">Approve</a>

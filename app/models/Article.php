@@ -63,7 +63,7 @@
             $this->db->bind(':slug', $data['slug']);
             $row = $this->db->single();
 
-            foreach ($data['tags'] as $tag) {
+            foreach ($data['selectedTag'] as $tag) {
                 $this->db->query('INSERT INTO article_tag (article_id, tag_id) VALUES (:article_id, :tag_id)');
                 $this->db->bind(':article_id', $row->id);
                 $this->db->bind(':tag_id', $tag);
@@ -73,7 +73,7 @@
 
         public  function updateArticle($data)
         {
-            $this->db->query('UPDATE articles set title = :title,slug = :slug,body = :body,/*image = :image*/category_id = :category_id WHERE id = :id');
+            $this->db->query('UPDATE articles set title = :title,slug = :slug,body = :body/*,image = :image*/,category_id = :category_id WHERE id = :id');
             $this->db->bind(':id', $data['id']);
             $this->db->bind(':title', $data['title']);
             $this->db->bind(':slug', $data['slug']);
@@ -98,7 +98,7 @@
             $this->db->bind(':id', $article->id);
             $this->db->execute();
 
-            foreach ($data['tags'] as $tag) {
+            foreach ($data['selectedTag'] as $tag) {
                 $this->db->query('INSERT INTO article_tag (article_id, tag_id) VALUES (:article_id, :tag_id)');
                 $this->db->bind(':article_id', $article->id);
                 $this->db->bind(':tag_id', $tag);
@@ -129,7 +129,6 @@
             }
         }
 
-
         public  function approveArticles($id)
         {
             $this->db->query('UPDATE articles SET status = :status WHERE id = :id');
@@ -154,14 +153,14 @@
 
         public function articlesSort()
         {
-                foreach ($_POST['positions'] as $position){
-                    $index = $position[0];
-                    $newPosition = $position[1];
+        foreach ($_POST['positions'] as $position){
+            $index = $position[0];
+            $newPosition = $position[1];
 
-                    $this->db->query('UPDATE articles SET position = :position WHERE id = :id');
-                    $this->db->bind(':position',$newPosition);
-                    $this->db->bind(':id',$index);
-                    $this->db->execute();
+            $this->db->query('UPDATE articles SET position = :position WHERE id = :id');
+            $this->db->bind(':position',$newPosition);
+            $this->db->bind(':id',$index);
+            $this->db->execute();
             }
         }
     }

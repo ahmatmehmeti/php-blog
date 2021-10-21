@@ -78,7 +78,7 @@ class User{
         $to      = $data['email'];
         $subject = 'Confirmation for resetting password';
         $message = "Reset your Password by clicking this link,
-               http://localhost/php-blog/users/reset_pass?email=$email
+               http://localhost/php-blog/users/reset_pass_form?email=$email
             ";
         $headers = 'From: ahmat.mehmeti97@gmail.com';
         mail($to, $subject, $message, $headers);
