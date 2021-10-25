@@ -1,6 +1,11 @@
 <?php
     class ArticleRequest
     {
+        /**
+         * @param $data
+         * @return array
+         * Validation for article data.
+         */
         public function ValidationForm($data)
         {
             if($data['title'] == ""){

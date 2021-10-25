@@ -46,7 +46,7 @@
 
                         <div class="form-group mt-2">
                             <label for="name">Select Date:</label>
-                            <input type="date" name="created_at" class="form-control form-control-lg <?php echo (!empty($data['errors']['created_at_err'])) ? 'is-invalid' : ''; ?>">
+                            <input type="datetime-local" name="created_at" class="form-control form-control-lg <?php echo (!empty($data['errors']['created_at_err'])) ? 'is-invalid' : ''; ?>">
                             <span class="invalid-feedback"><?php echo $data['errors']['created_at_err']; ?></span>
                         </div>
 

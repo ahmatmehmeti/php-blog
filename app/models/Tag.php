@@ -2,11 +2,19 @@
 class Tag extends Controller
 {
     private $db;
+
+    /**
+     * Load the database.
+     */
     public function __construct()
     {
         $this->db = new Database;
     }
 
+    /**
+     * @return mixed
+     * Select all form tags.
+     */
     public function getTags()
     {
         $this->db->query('SELECT * FROM tags');
@@ -14,12 +22,15 @@ class Tag extends Controller
         return $results;
     }
 
+    /**
+     * @param $data
+     * @return bool
+     * Add tags.
+     */
     public function addTags($data)
     {
-        $this->db->query('INSERT INTO tags (name,created_at) VALUE (:name, :created_at)');
+        $this->db->query('INSERT INTO tags (name) VALUE (:name)');
         $this->db->bind(':name', $data['name']);
-        $this->db->bind(':name', $data['name']);
-        $this->db->bind(':created_at',$data['created_at']);
 
         if($this->db->execute()){
             return true;
@@ -28,12 +39,16 @@ class Tag extends Controller
         }
     }
 
+    /**
+     * @param $data
+     * @return bool
+     * Update tags.
+     */
     public function updateTag($data)
     {
-        $this->db->query('UPDATE tags SET name = :name,created_at = :created_at WHERE id = :id');
+        $this->db->query('UPDATE tags SET name = :name WHERE id = :id');
         $this->db->bind(':id', $data['id']);
         $this->db->bind(':name', $data['name']);
-        $this->db->bind(':created_at',$data['created_at']);
 
         if($this->db->execute()){
             return true;
@@ -42,6 +57,11 @@ class Tag extends Controller
         }
     }
 
+    /**
+     * @param $id
+     * @return mixed
+     * Select tags by id.
+     */
     public function getTagById($id)
     {
         $this->db->query('SELECT * FROM tags WHERE id = :id');
@@ -52,6 +72,11 @@ class Tag extends Controller
         return $row;
     }
 
+    /**
+     * @param $id
+     * @return bool
+     * Delete tag.
+     */
     public function deleteTag($id)
     {
         $this->db->query('DELETE FROM tags WHERE id = :id');
@@ -64,6 +89,11 @@ class Tag extends Controller
         }
     }
 
+    /**
+     * @param $id
+     * @return array
+     * To get all the tags of one article.
+     */
     public function getTagByArticle($id){
         $this->db->query("SELECT tag_id FROM article_tag WHERE article_id = :id");
         $this->db->bind(':id', $id);

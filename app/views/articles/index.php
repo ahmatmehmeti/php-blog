@@ -10,7 +10,7 @@
                 </div>
 
                 <div class="card-body">
-                    <?php if (empty($data['articles'])): ?>
+                    <?php if (empty($data['pagination']['articles'])): ?>
                         <div class="text-center"><?php echo 'No data available'; ?></div>
                     <?php else: ?>
                         <table class="table table-stripped table-hover table-bordered">
@@ -20,26 +20,33 @@
                                     <th>Title</th>
                                     <th>Body</th>
                                     <th>Created at</th>
-                                    <th>Actions</th>
+                                    <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="row_positions">
-                                <?php foreach ($data['articles'] as $article) : ?>
+                            <tbody class="row_positions ">
+                                <?php foreach ($data['pagination']['articles'] as $article) : ?>
                                     <tr data-index="<?php echo $article->id; ?>" data-position="<?php echo $article->position?>">
                                         <td><?php echo $article->id; ?></td>
                                         <td><?php echo $article->title; ?></td>
                                         <td><?php echo substr(strip_tags($article->body), 0, 50), strlen($article->body) > 50 ? "..." : ""  ?></td>
                                         <td><?php echo $article->created_at; ?></td>
-                                        <td><?php if($_SESSION['user_role'] == 'admin'): ?>
-                                                <a href="<?php echo URLROOT; ?>/articles/approveArticle/<?php echo $article-> id; ?>" class="btn btn-warning ;">Approve</a>
-                                            <?php else: ?>
-                                                <a href="<?php echo URLROOT; ?>/articles/edit/<?php echo $article-> id; ?>" target="_blank" class="btn btn-warning ;">Edit</a>
+                                        <td class="text-center">
+                                            <?php if(isAdmin() && $article->status == 0): ?>
+                                                <a href="<?php echo URLROOT; ?>/articles/approveArticle/<?php echo $article->id; ?>" class="btn btn-warning ;">Approve</a>
+                                                <a href="<?php echo URLROOT; ?>/articles/edit/<?php echo $article->id; ?>" target="_blank" class="btn btn-warning ;">Edit</a>
+                                            <?php else:?>
+                                                <a href="<?php echo URLROOT; ?>/articles/edit/<?php echo $article->id; ?>" target="_blank" class="btn btn-warning ;">Edit</a>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endforeach;?>
                             </tbody>
                         </table>
+                        <div class="links text-center">
+                            <?php for($page = 1; $page<= $data['pagination']['totalAll']; $page++):  ?>
+                                <a href="<?php echo URLROOT; ?>/articles/index/<?php echo $page; ?>" class="btn btn-primary"><?php echo $page?> </a>
+                            <?php endfor; ?>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -56,7 +63,6 @@
                         $(this).attr('data-position', (index+1)).addClass('updated');
                     }
                  });
-
                  saveNewPositions();
              }
         });

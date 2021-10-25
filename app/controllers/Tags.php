@@ -2,6 +2,10 @@
 require_once '../app/requests/TagRequest.php';
 class Tags extends Controller
 {
+    /**
+     *Load Models
+     * If the user is not admin,can not create,update or delete tags.
+     */
     public function __construct()
     {
         if(!isAdmin()){
@@ -12,6 +16,9 @@ class Tags extends Controller
         $this->tagsRequest = new TagRequest();
     }
 
+    /**
+     * Load all Tags
+     */
     public function index()
     {
         $tags = $this->tagModel->getTags();
@@ -22,6 +29,10 @@ class Tags extends Controller
         $this->view('tags/index', $data);
     }
 
+    /**
+     * Validate the inputs,make sure there are no errors and creates the
+     * tag.Redirects to the tags page with the flash message.
+     */
     public function store()
     {
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -29,7 +40,6 @@ class Tags extends Controller
 
         $data = [
             'name' => $_POST['name'],
-            'created_at'=>date('Y-m-d H:i:s'),
             'name_err' => '',
             'tags'=>$tags,
             'errors' => []
@@ -46,6 +56,10 @@ class Tags extends Controller
         }
     }
 
+    /**
+     * @param $id
+     * Calls the edit form with the data.
+     */
     public function edit($id)
     {
         $tag = $this->tagModel->getTagById($id);
@@ -57,13 +71,17 @@ class Tags extends Controller
         $this->view('tags/edit', $data);
     }
 
+    /**
+     * @param $id
+     * Validate the inputs,makes sure there are no errors and edits the
+     * tag.Redirects to the tags page with the flash message.
+     */
     public function update($id)
     {
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $data = [
             'id' => $id,
             'name' => trim($_POST['name']),
-            'created_at'=>date('Y-m-d H:i:s'),
             'name_err' => '',
             'errors' => []
         ];
@@ -79,6 +97,10 @@ class Tags extends Controller
         }
     }
 
+    /**
+     * @param $id
+     * Deletes the tag.
+     */
     public function delete($id)
     {
         $this->tagModel->deleteTag($id);

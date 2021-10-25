@@ -1,6 +1,13 @@
 <?php
-   class Database
+   class Database extends Controller
     {
+       /**
+        *  Connects database Using PDO
+        *  Creates prepared Statements
+        * 	Binds params to values
+        *  Returns rows and results
+        */
+
         private $host = DB_HOST;
         private $user = DB_USER;
         private $pass = DB_PASS;
@@ -10,28 +17,45 @@
         private $dbh;
         private $error;
 
-        public function __construct()
+       /**
+        * Set DSN
+        * Create a new PDO instance
+        * // Catch any errors
+        */
+       public function __construct()
         {
-            $dns = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname;
+            $dsn = 'mysql:host=' . $this->host . ';dbname=' . $this->dbname;
             $options = array(
                 PDO::ATTR_PERSISTENT,
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             );
 
-            try{
-                $this->dbh = new PDO($dns,$this->user,$this->pass, $options);
-            }catch(PDOException $e) {
-                $this -> error = $e->getMessage();
-                echo $this->error;
+            try {
+                $this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
+            } catch (Exception $e) {
+                if ($e) {
+                    $this->view('db/error');
+                    die();
+                }
             }
         }
 
-        public function query($sql)
+       /**
+        * @param $sql
+        * Prepare statement with query
+        */
+       public function query($sql)
         {
             $this->stmt = $this->dbh->prepare($sql);
         }
 
-        public function bind($param,$value,$type = null)
+       /**
+        * @param $param
+        * @param $value
+        * @param null $type
+        * Bind values
+        */
+       public function bind($param, $value, $type = null)
         {
             if(is_null($type)){
                 switch (true){
@@ -51,36 +75,64 @@
             $this->stmt->bindValue($param,$value,$type);
         }
 
-        public function execute()
+       /**
+        * @return mixed
+        * Execute the prepared statement
+        */
+       public function execute()
         {
             return $this->stmt->execute();
         }
 
-        public function resultSet()
+       /**
+        * @return mixed
+        * Get result set as array of objects
+        */
+       public function resultSet()
         {
             $this->execute();
             return $this->stmt->fetchAll(PDO::FETCH_OBJ);
         }
 
+       /**
+        * @return mixed
+        * Get result as associative array.
+        */
        public function resultSetAssoc()
        {
            $this->execute();
            return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
        }
 
-        public function single()
+       /**
+        * @return mixed
+        * Get single record as object
+        */
+       public function single()
         {
             $this->execute();
             return $this->stmt->fetch(PDO::FETCH_OBJ);
         }
 
-        public function rowCount()
+       /**
+        * @return mixed
+        * Get record row count
+        */
+       public function rowCount()
         {
             return $this->stmt->rowCount();
         }
 
+       /**
+        * Migrating all database tables.
+        */
        public function migrate()
        {
+
+          /* $dbQuery = "CREATE DATABASE php_blog";
+
+           $this->query($dbQuery);
+           $this->execute();*/
 
            $usersQuery = "
         
@@ -107,7 +159,6 @@
         CREATE TABLE categories  (
           id int(11) NOT NULL AUTO_INCREMENT,
           name varchar(255) NOT NULL,
-          created_at datetime NOT NULL,
           PRIMARY KEY (id) 
           )
         
@@ -124,7 +175,6 @@
                 CREATE TABLE tags  (
                   id int(11) NOT NULL AUTO_INCREMENT,
                   name varchar(255) NOT NULL,
-                  created_at datetime NOT NULL,
                   PRIMARY KEY (id) 
                 )                   
             ";
@@ -147,7 +197,7 @@
           user_id int(11) NOT NULL,
           category_id int(11) NOT NULL,
           status tinyint(1) DEFAULT 0,
-          created_at date NULL DEFAULT NULL,
+          created_at datetime NULL DEFAULT NULL,
           position int(255) DEFAULT 0,
           PRIMARY KEY (id),
           CONSTRAINT category_id FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE ON UPDATE CASCADE,

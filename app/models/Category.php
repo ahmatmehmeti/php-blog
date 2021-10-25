@@ -2,11 +2,19 @@
     class Category extends Controller
     {
         private $db;
+
+        /**
+         * Load the database.
+         */
         public function __construct()
         {
             $this->db = new Database;
         }
 
+        /**
+         * @return mixed
+         * Select all form categories
+         */
         public function getCategories()
         {
             $this->db->query('SELECT * FROM categories');
@@ -14,12 +22,15 @@
             return $results;
         }
 
+        /**
+         * @param $data
+         * @return bool
+         * Add categories.
+         */
         public function addCategories($data)
         {
-            $this->db->query('INSERT INTO categories (name,created_at) VALUE (:name, :created_at)');
+            $this->db->query('INSERT INTO categories (name) VALUE (:name)');
             $this->db->bind(':name', $data['name']);
-            $this->db->bind(':name', $data['name']);
-            $this->db->bind(':created_at',$data['created_at']);
 
             if($this->db->execute()){
                 return true;
@@ -28,12 +39,16 @@
             }
         }
 
+        /**
+         * @param $data
+         * @return bool
+         * Update categories.
+         */
         public function updateCategory($data)
         {
-            $this->db->query('UPDATE categories SET name = :name,created_at = :created_at WHERE id = :id');
+            $this->db->query('UPDATE categories SET name = :name WHERE id = :id');
             $this->db->bind(':id', $data['id']);
             $this->db->bind(':name', $data['name']);
-            $this->db->bind(':created_at',$data['created_at']);
 
             if($this->db->execute()){
                 return true;
@@ -42,6 +57,11 @@
             }
         }
 
+        /**
+         * @param $id
+         * @return mixed
+         * Select all categories by id.
+         */
         public function getCategorieById($id)
         {
             $this->db->query('SELECT * FROM categories WHERE id = :id');
@@ -50,6 +70,12 @@
             return $row;
         }
 
+
+        /**
+         * @param $id
+         * @return bool
+         * Delete the category.
+         */
         public function deleteCategory($id)
         {
             $this->db->query('DELETE FROM categories WHERE id = :id');

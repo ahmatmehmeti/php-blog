@@ -1,5 +1,11 @@
 <?php
     session_start();
+
+    /**
+     * Flash message helper.
+     * If there is no message,create it.
+     * If message exists,display it.
+     */
     function flash($name = '', $message = '', $class = 'alert alert-success'){
         if(!empty($name)){
             if(!empty($message) && empty($_SESSION[$name])){
@@ -22,6 +28,10 @@
         }
     }
 
+    /**
+     * @return bool
+     * Check is user is logged in.
+     */
     function isLoggedIn()
     {
         if(isset($_SESSION['user_id'])){
@@ -31,6 +41,10 @@
         }
     }
 
+    /**
+     * @return bool
+     * Check if user is Admin.
+     */
     function isAdmin()
     {
         if($_SESSION['user_role'] == 'admin')

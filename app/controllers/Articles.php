@@ -2,9 +2,11 @@
 require_once '../app/requests/ArticleRequest.php';
 class Articles extends Controller
 {
+    /**
+     * Loads Models.
+     */
     public function __construct()
     {
-
         $this->articleModel = $this->model('Article');
         $this->categoryModel = $this->model('Category');
         $this->tagModel = $this->model('Tag');
@@ -12,20 +14,28 @@ class Articles extends Controller
         $this->articleRequest = new ArticleRequest();
     }
 
-    public function index()
+    /**
+     *Loads all articles.
+     */
+    public function index($page_nr = 1)
     {
         if(isAdmin()){
-            $articles = $this->articleModel->getArticlesNotApproved();
+            $pagination = $this->articleModel->paginationArticlesAdmin($page_nr);
         }else{
-            $articles = $this->articleModel->getArticles();
+            $pagination = $this->articleModel->paginationArticlesUser($page_nr);
         }
+
         $data = [
-            'articles' => $articles
+            'pagination' => $pagination,
         ];
+
 
         $this->view('articles/index', $data);
     }
 
+    /**
+     * Loads the create form.
+     */
     public function create(){
         $categories = $this->categoryModel->getCategories();
         $tags = $this->tagModel->getTags();
@@ -39,25 +49,33 @@ class Articles extends Controller
             'date'=>'',
             'image' => '',
             'user_id' =>'',
-
         ];
+
         $this->view('articles/create', $data);
     }
 
+    /**
+     * Validates the inputs,make sure there are no errors and creates the
+     * article.Redirects to the articles page with the flash message.
+     */
     public function store()
     {
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         $categories = $this->categoryModel->getCategories();
         $tags = $this->tagModel->getTags();
 
-        if(isset($_FILES['image']['name']))
+        if(($_POST['image'] == null))
         {
-            $folder = "img/";
+            $folder = "img/img.jpg";
+            $destination = $folder . $_FILES['image']['name'];
+            move_uploaded_file($_FILES['image']['tmp_name'], $destination);
+        }else{
+            $folder = "img";
             $destination = $folder . $_FILES['image']['name'];
             move_uploaded_file($_FILES['image']['tmp_name'], $destination);
         }
 
-        $slug = preg_replace('/[^a-z0-9]+/i', '-', trim(strtolower($_POST['title'])));
+        $slug = preg_replace('/[^a-z0-9]+/i', '-',trim(rand(0,1000).'-'.strtolower($_POST['title'])));
 
         $data = [
             'title' => $_POST['title'],
@@ -91,11 +109,20 @@ class Articles extends Controller
         }
     }
 
+    /**
+     * @param $id
+     * Calls the edit form with the data.
+     */
     public function edit($id){
+
         $article = $this->articleModel->getArticlesById($id);
         $categories = $this->categoryModel->getCategories();
         $articleTags = $this->tagModel->getTagByArticle($id);
         $tags = $this->tagModel->getTags();
+
+        if(!isAdmin() && $_SESSION['user_id'] != $article->user_id){
+            redirect('home/index');
+        }
 
         $data = [
             'id'=>$id,
@@ -113,6 +140,11 @@ class Articles extends Controller
         $this->view('articles/edit', $data);
     }
 
+    /**
+     * @param $id
+     * Validates the inputs,makes sure there are no errors and edits the
+     * article.Redirects to the articles page with the flash message.
+     */
     public function update($id)
     {
         $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -120,13 +152,16 @@ class Articles extends Controller
         $categories = $this->categoryModel->getCategories();
         $articleTags = $this->tagModel->getTagByArticle($id);
 
-        if(isset($_FILES['image']['name']))
+        if(!$_POST['image'])
         {
-            $folder = "img/";
+            $folder = "img/img.jpg";
             $destination = $folder . $_FILES['image']['name'];
             move_uploaded_file($_FILES['image']['tmp_name'], $destination);
-
-        }
+        }else{
+            $folder = "img";
+            $destination = $folder . $_FILES['image']['name'];
+            move_uploaded_file($_FILES['image']['tmp_name'], $destination);
+    }
 
         $slug = preg_replace('/[^a-z0-9]+/i', '-', trim(strtolower($_POST['title']) ));
 
@@ -134,7 +169,7 @@ class Articles extends Controller
             'title' => $_POST['title'],
             'id' => $id,
             'slug' => $slug,
-            /*'image' => $destination,*/
+            'image' => $destination,
             'categories' => $categories,
             'selectedTag' => $_POST['tags'],
             'articleTags' => $articleTags,
@@ -155,8 +190,6 @@ class Articles extends Controller
         if(!empty($data['errors'])){
             $this->view('articles/edit', $data);
         } else{
-
-
             $this->articleModel->updateArticle($data);
             $this->articleModel->updateTagsArticle($data);
             flash('articles_message','Article updated successfully');
@@ -164,6 +197,10 @@ class Articles extends Controller
         }
     }
 
+    /**
+     * @param $id
+     * Deletes article.
+     */
     public function delete($id)
     {
         $this->articleModel->deleteArticle($id);
@@ -171,6 +208,12 @@ class Articles extends Controller
         redirect('articles');
     }
 
+    /**
+     * @param $id
+     * Calls the method form model for approving articles.
+     * When the user creates the article,the admin must approve that article
+     * to be shown to the home page.
+     */
     public function approveArticle($id)
     {
         if(!isAdmin()){
@@ -181,10 +224,14 @@ class Articles extends Controller
         redirect('articles/index');
     }
 
-    public function show($id){
-        $article = $this->articleModel->getArticlesById($id);
+    /**
+     * @param $slug
+     * Shows all the details of article.
+     */
+    public function show($slug){
+        $article = $this->articleModel->getArticlesBySlug($slug);
         $categories = $this->categoryModel->getCategories();
-        $tags = $this->tagModel->getTagByArticle($id);
+        $tags = $this->tagModel->getTagByArticle($article->id);
         $users = $this->userModel->getUsers();
         $data = [
             'article' => $article,
@@ -195,17 +242,27 @@ class Articles extends Controller
         $this->view('articles/show', $data);
     }
 
-    public function getArticlesByCategory($id)
+    /**
+     * @param $id
+     * Calls the method from model to get all the articles by category.
+     */
+    public function getArticlesByCategory($category_id,$page_nr = 1)
     {
-        $articles = $this->articleModel->getArticlesByCategory($id);
+        $articles = $this->articleModel->getArticlesByCategory($category_id);
         $categories = $this->categoryModel->getCategories();
+        $pagination = $this->articleModel->paginationCat($category_id, $page_nr);
+
         $data = [
             'categories' => $categories,
-            'articles' => $articles
+            'articles' => $articles,
+            'pagination' => $pagination,
         ];
         $this->view('home/index', $data);
     }
 
+    /**
+     *Calls the method form model for sorting articles(Drag & drop).
+     */
     public function articlesSort()
     {
         $this->articleModel->articlesSort();

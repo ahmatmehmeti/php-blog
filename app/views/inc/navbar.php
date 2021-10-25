@@ -10,9 +10,6 @@
                 <li class="nav-item active">
                     <a class="nav-link" aria-current="page" href="<?php echo URLROOT; ?>">Home</a>
                 </li>
-<!--                <li class="nav-item">
-                    <a class="nav-link" href="<?php /*echo URLROOT;*/?>/pages/about">About</a>
-                </li>-->
             </ul>
             <ul class="navbar-nav ml-auto mb-2 mb-md-0">
                 <?php if (isset($_SESSION['user_id'])) : ?>

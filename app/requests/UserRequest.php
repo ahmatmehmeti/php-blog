@@ -1,6 +1,12 @@
 <?php
     class UserRequest extends Controller
     {
+        /**
+         * @param $data
+         * @return array
+         * Validation for users data.
+         */
+
         public function __construct()
         {
             $this->userModel = $this->model('User');
@@ -11,13 +17,15 @@
             if($data['name'] == ""){
                 $data['errors']['name_err'] = 'Please enter name';
             }
+
             if (empty($data['email'])) {
                 $data['errors']['email_err'] = 'Please enter email!';
-            } else {
+            }else {
                 if ($this->userModel->findUserByEmail($data['email'])) {
                     $data['errors']['email_err'] = 'Email is already taken!';
                 }
             }
+
             if($data['password'] == ""){
                 $data['errors']['password_err'] = 'Please enter password';
             }

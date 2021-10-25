@@ -14,13 +14,11 @@
                         <thead  style="background-color: ghostwhite;">
                         <tr>
                             <th>Name</th>
-                            <th>Created_at</th>
                             <th>Actions</th>
                         </tr>
                         <?php foreach ($data['tags'] as $tag) : ?>
                             <tr>
                                 <td><?php echo $tag->name; ?></td>
-                                <td><?php echo $tag->created_at; ?></td>
                                 <td> <a href="<?php echo URLROOT; ?>/tags/edit/<?php echo $tag-> id ?> " class="btn btn-warning ;">Edit</a>
                                 </td>
                             </tr>

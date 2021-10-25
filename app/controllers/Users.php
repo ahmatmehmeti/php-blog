@@ -2,12 +2,18 @@
 require_once '../app/requests/UserRequest.php';
     class Users extends Controller
     {
+        /**
+         * Loads user model and requests for validation.
+         */
         public function __construct()
         {
             $this->userModel = $this->model('User');
             $this->userRequest = new UserRequest();
         }
 
+        /**
+         * Loads the register form.
+         */
         public function register()
         {
             $data = [
@@ -23,6 +29,10 @@ require_once '../app/requests/UserRequest.php';
             $this->view('users/register', $data);
         }
 
+        /**
+         * Validate the inputs,make sure there are no errors and creates the
+         * user.Redirects to the login page with the flash message.
+         */
         public function registerUser()
         {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -51,6 +61,9 @@ require_once '../app/requests/UserRequest.php';
             }
         }
 
+        /**
+         * Loads the login form.
+         */
         public function login()
         {
             $data = [
@@ -59,10 +72,13 @@ require_once '../app/requests/UserRequest.php';
                 'email_err' => '',
                 'password_err' => '',
             ];
-
             $this->view('users/login', $data);
         }
 
+        /**
+         * Validate the inputs,make sure there are no errors and login the
+         * user.Creates the session for this user.
+         */
         public function loginUser()
         {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -88,10 +104,15 @@ require_once '../app/requests/UserRequest.php';
 
             $data = $this->userRequest->LoginValidationFrom($data);
 
-            if (empty($data['email_err']) && empty($data['password_err'])) {
+
+            if (empty($data['email_err']) && empty($data['password_err'])){
                 $loggedInUser = $this->userModel->login($data['email'], $data['password']);
                 if ($loggedInUser) {
-                    $this->createUserSession($loggedInUser);
+                    if(!($this->userModel->verified($data['email']))){
+                        flash('login_err_message','Your account is not verified!');
+                    }else{
+                        $this->createUserSession($loggedInUser);
+                    }
                 } else {
                     $data['password_err'] = 'Password incorrect';
                 }
@@ -101,6 +122,10 @@ require_once '../app/requests/UserRequest.php';
             }
         }
 
+        /**
+         * @param $user
+         * Creates session for the user.
+         */
         public function createUserSession($user)
         {
             $_SESSION['user_id'] = $user->id;
@@ -108,9 +133,12 @@ require_once '../app/requests/UserRequest.php';
             $_SESSION['user_email'] = $user->email;
             $_SESSION['user_password'] = $user->password;
             $_SESSION['user_role'] = $user->role;
-            redirect('posts');
+            redirect('home/index');
         }
 
+        /**
+         * Logout
+         */
         public function logout()
         {
             unset($_SESSION['user_id']);
@@ -123,6 +151,11 @@ require_once '../app/requests/UserRequest.php';
             redirect('users/login');
         }
 
+        /**
+         * Calls the method form model to verify.
+         * After the registration,user must verify
+         * the account to his email.
+         */
         public function verify()
         {
             $this->userModel->verify();
@@ -136,6 +169,10 @@ require_once '../app/requests/UserRequest.php';
              $this->view('users/login', $data);
         }
 
+        /**
+         *
+         * Loads the send-link form to send email.
+         */
         public function send_link_form()
         {
             $data = [
@@ -145,6 +182,10 @@ require_once '../app/requests/UserRequest.php';
             $this->view('users/send_link', $data);
         }
 
+        /**
+         * Validation for input.
+         * Sends email to user for resetting password.
+         */
         public function send_link()
         {
             $data = [
@@ -163,6 +204,9 @@ require_once '../app/requests/UserRequest.php';
             }
         }
 
+        /**
+         * Loads the form for resetting password.
+         */
         public function reset_pass_form()
         {
             $data = [
@@ -174,6 +218,10 @@ require_once '../app/requests/UserRequest.php';
             $this->view('users/reset_pass' ,$data);
         }
 
+        /**
+         * Validation for inputs.
+         * Resets the password.
+         */
         public function reset_pass()
         {
             $data = [

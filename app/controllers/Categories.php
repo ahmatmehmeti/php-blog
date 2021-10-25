@@ -2,6 +2,10 @@
 require_once '../app/requests/CategoryRequest.php';
     class Categories extends Controller
     {
+        /**
+         * Load Models
+         * If the user is not admin,can not create,update or delete categories.
+         */
         public function __construct()
         {
             if(!isAdmin()){
@@ -11,6 +15,9 @@ require_once '../app/requests/CategoryRequest.php';
             $this->categoryRequest = new CategoryRequest();
         }
 
+        /**
+         * Load all Categories
+         */
         public function index()
         {
             $categories = $this->categoryModel->getCategories();
@@ -21,6 +28,10 @@ require_once '../app/requests/CategoryRequest.php';
             $this->view('categories/index', $data);
         }
 
+        /**
+         * Validate the inputs,make sure there are no errors and creates the
+         * category.Redirects to the categories page with the flash message.
+         */
         public function store(){
             $categories = $this->categoryModel->getCategories();
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
@@ -28,7 +39,6 @@ require_once '../app/requests/CategoryRequest.php';
             $data = [
                 'name' => trim($_POST['name']),
                 'categories' => $categories,
-                'created_at' => date('Y-m-d H:i:s'),
                 'name_err' => '',
                 'errors' => [],
             ];
@@ -43,6 +53,10 @@ require_once '../app/requests/CategoryRequest.php';
             }
         }
 
+        /**
+         * @param $id
+         * Calls the edit form with the data.
+         */
         public function edit($id)
         {
             $category = $this->categoryModel->getCategorieById($id);
@@ -54,13 +68,17 @@ require_once '../app/requests/CategoryRequest.php';
             $this->view('categories/edit', $data);
         }
 
+        /**
+         * @param $id
+         * Validates the inputs,makes sure there are no errors and edits the
+         * category.Redirects to the categories page with the flash message.
+         */
         public function update($id)
         {
             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
             $data = [
                 'id' => $id,
                 'name' => trim($_POST['name']),
-                'created_at'=>date('Y-m-d H:i:s'),
                 'name_err' => '',
                 'errors' => []
             ];
@@ -76,6 +94,10 @@ require_once '../app/requests/CategoryRequest.php';
             }
         }
 
+        /**
+         * @param $id
+         * Deletes the category.
+         */
         public function delete($id)
         {
             $this->categoryModel->deleteCategory($id);

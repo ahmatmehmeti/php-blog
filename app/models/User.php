@@ -2,10 +2,18 @@
 class User{
     private $db;
 
+    /**
+     * Load the database.
+     */
     public function __construct(){
         $this->db = new Database;
     }
 
+    /**
+     * @param $data
+     * @return false|void
+     * Register and send email to user to verify.
+     */
     public function register($data){
         $hash = md5(rand(0,1000));
         $this->db->query('INSERT INTO users(name,email,password,hash,created_at) VALUES (:name,:email,:password,:hash,:created_at)');
@@ -28,7 +36,13 @@ class User{
         }
     }
 
-    public function login($email,$password){
+    /**
+     * @param $email
+     * @param $password
+     * @return false
+     * Login when user and password are correct.
+     */
+    public function login($email, $password){
         $this->db->query('SELECT * FROM users WHERE email = :email');
         $this->db->bind(':email',$email);
         $row = $this->db->single();
@@ -41,6 +55,11 @@ class User{
         }
     }
 
+    /**
+     * @param $email
+     * @return bool
+     * To find users by email.
+     */
     public function findUserByEmail($email){
         $this->db->query('SELECT * FROM users WHERE email = :email');
         $this->db->bind(':email', $email);
@@ -54,6 +73,11 @@ class User{
         }
     }
 
+    /**
+     * @return bool
+     * Verify user by setting column active 0 to 1.
+     * From not verify to verify.
+     */
     public  function verify()
     {
         $this->db->query('SELECT * FROM users WHERE active = :active and hash = :hash');
@@ -72,6 +96,20 @@ class User{
         }
     }
 
+    public  function verified($email)
+    {
+        $this->db->query('SELECT * FROM users WHERE active = :active and email = :email');
+        $this->db->bind(':active', 1);
+        $this->db->bind(':email', $email);
+        $user = $this->db->single();
+
+        return $user;
+    }
+
+    /**
+     * @param $data
+     * Send link to user to reset password.
+     */
     public function send_link($data)
     {
         $email = md5($data['email']);
@@ -84,6 +122,11 @@ class User{
         mail($to, $subject, $message, $headers);
     }
 
+    /**
+     * @param $data
+     * @return false|void
+     * Reset user password.
+     */
     public function reset_pass($data)
     {
         $this->db->query('SELECT * FROM users WHERE md5(email) = :email');
@@ -101,6 +144,10 @@ class User{
         }
     }
 
+    /**
+     * @return mixed
+     * Select all form users.
+     */
     public function getUsers()
     {
         $this->db->query('SELECT * FROM users');

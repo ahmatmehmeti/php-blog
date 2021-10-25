@@ -16,8 +16,6 @@
                                 <div class="col-md-6">
                                     <div class='panel-heading'><h3><?php echo $data['article']->title?></h3></div>
                                     <p><b>Description</b>: <?php echo $data['article']->body?></p><br>
-
-
                                 </div>
                                 <div class="col-md-3">
                                     <?php foreach ($data['categories'] as $category): ?>
@@ -32,6 +30,7 @@
                                         <?php endif; ?>
                                     <?php endforeach; ?>
 
+                                    <p><b>Publish date:</b>: <?php echo date("d-m-Y", strtotime($data['article']->created_at ))?></p><br>
 
                                     <?php foreach ($data['tags'] as $tag): ?>
                                         <button type="button" class="btn btn-secondary btn-sm"><?php echo $tag; ?></button>

@@ -14,13 +14,11 @@
                         <thead  style="background-color: ghostwhite;">
                         <tr>
                             <th>Name</th>
-                            <th>Created_at</th>
                             <th>Actions</th>
                         </tr>
                         <?php foreach ($data['categories'] as $category) : ?>
                         <tr>
                             <td><?php echo $category->name; ?></td>
-                            <td><?php echo $category->created_at; ?></td>
                             <td> <a href="<?php echo URLROOT; ?>/categories/edit/<?php echo $category-> id ?> " class="btn btn-warning ;">Edit</a>
                             </td>
                         </tr>
