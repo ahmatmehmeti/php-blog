@@ -346,7 +346,6 @@
             $db = $this->db->resultSet();
 
             $countPosts = count($db);
-
             $result = ceil($countPosts / $postsForPage);
             $offset = ($page_nr - 1) * $postsForPage;
 
