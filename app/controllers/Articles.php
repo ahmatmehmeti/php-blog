@@ -1,5 +1,6 @@
 <?php
 require_once '../app/requests/ArticleRequest.php';
+require_once '../app/requests/ArticleUpdateRequest.php';
 class Articles extends Controller
 {
     /**
@@ -12,6 +13,7 @@ class Articles extends Controller
         $this->tagModel = $this->model('Tag');
         $this->userModel = $this->model('User');
         $this->articleRequest = new ArticleRequest();
+        $this->articleUpdateRequest = new ArticleUpdateRequest();
     }
 
     /**
@@ -64,13 +66,9 @@ class Articles extends Controller
         $categories = $this->categoryModel->getCategories();
         $tags = $this->tagModel->getTags();
 
-        if(($_POST['image'] == null))
+        if(isset($_FILES['image']['name']))
         {
-            $folder = "img/img.jpg";
-            $destination = $folder . $_FILES['image']['name'];
-            move_uploaded_file($_FILES['image']['tmp_name'], $destination);
-        }else{
-            $folder = "img";
+            $folder = "img/";
             $destination = $folder . $_FILES['image']['name'];
             move_uploaded_file($_FILES['image']['tmp_name'], $destination);
         }
@@ -130,6 +128,7 @@ class Articles extends Controller
             'article' => $article,
             'articleTags' => $articleTags,
             'body'=> $article->body,
+            'image_old' => $article->image,
             'image' => '',
             'category_id' => $article->category_id,
             'created_at' => $article->created_at,
@@ -152,11 +151,9 @@ class Articles extends Controller
         $categories = $this->categoryModel->getCategories();
         $articleTags = $this->tagModel->getTagByArticle($id);
 
-        if(!$_POST['image'])
+        if($_FILES['image']['name'] == "")
         {
-            $folder = "img/img.jpg";
-            $destination = $folder . $_FILES['image']['name'];
-            move_uploaded_file($_FILES['image']['tmp_name'], $destination);
+            $destination = $_POST['image_old'];
         }else{
             $folder = "img";
             $destination = $folder . $_FILES['image']['name'];
@@ -170,6 +167,7 @@ class Articles extends Controller
             'id' => $id,
             'slug' => $slug,
             'image' => $destination,
+            'image_old' => $_POST['image_old'],
             'categories' => $categories,
             'selectedTag' => $_POST['tags'],
             'articleTags' => $articleTags,
@@ -186,7 +184,7 @@ class Articles extends Controller
             'body_err' => '',
         ];
 
-        $data=$this->articleRequest->ValidationForm($data);
+        $data=$this->articleUpdateRequest->ValidationForm($data);
         if(!empty($data['errors'])){
             $this->view('articles/edit', $data);
         } else{

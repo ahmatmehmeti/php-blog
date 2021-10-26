@@ -18,8 +18,8 @@
                     </div>
                     <div class="form-group mt-2">
                         <label for="name">Image:</label>
-                        <input type="file" name="image" class="image form-control form-control-lg <?php echo (!empty($data['errors']['image_err'])) ? 'is-invalid' : ''; ?>">
-                        <span class="invalid-feedback"><?php echo $data['errors']['image_err']; ?></span>
+                        <input type="file" name="image" class="image form-control form-control-lg">
+                        <input type="hidden" name="image_old" value="<?php echo $data['image_old']; ?>">
                     </div>
                     <div class="form-group mt-2">
                             <label for="tags">Tags:</label>

@@ -23,6 +23,9 @@
             if($data['created_at'] == ""){
                 $data['errors']['created_at_err'] = 'Please enter date';
             }
+            if(empty($_FILES['image']['name'])){
+                $data['errors']['image_err'] = 'Please select image';
+            }
             return $data;
         }
     }
